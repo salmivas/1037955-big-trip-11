@@ -1,7 +1,7 @@
 # Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Иван Салмин](https://up.htmlacademy.ru/ecmascript/11/user/1037955).
-* Наставник: `Неизвестно`.
+* Наставник: [Виталий Кравцов](https://htmlacademy.ru/profile/id64132).
 
 ---
 
