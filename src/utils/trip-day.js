@@ -1,12 +1,9 @@
-import {MONTHS} from "../const";
+import {
+  createMonthDayFormat,
+  createDateFormat
+} from "./common";
 
-const createDateFormat = (time) => time.toISOString().split(`T`).slice(0, -1).toString();
-
-const createMonthDayFormat = (date) => {
-  return `${MONTHS[Number(date.split(`-`)[1]) - 1]} ${Number(date.split(`-`)[2])}`;
-};
-
-const createDays = (eventsArray) => {
+const createDaysData = (eventsArray) => {
   return Array.from(new Set(eventsArray
     .map(
         (event) => createDateFormat(event.dateFrom)
@@ -20,4 +17,4 @@ const createDays = (eventsArray) => {
   });
 };
 
-export {createDays};
+export {createDaysData};

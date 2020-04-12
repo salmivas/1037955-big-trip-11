@@ -1,3 +1,5 @@
+import {MONTHS} from "../const";
+
 const getRandomIntegerNumber = (min, max) => {
   return min + Math.floor(max * Math.random());
 };
@@ -21,9 +23,20 @@ const setFirstLetterInUppercase = (anyString) => {
   return anyString.replace(/^./, (str) => str.toUpperCase());
 };
 
+const createDateFormat = (time) => time.toISOString().split(`T`).slice(0, -1).toString();
+
+const createMonthDayFormat = (date) => {
+  const regExToMatchValidFormat = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/;
+  return regExToMatchValidFormat.test(date) ?
+    `${MONTHS[Number(date.split(`-`)[1]) - 1]} ${Number(date.split(`-`)[2])}` :
+    `${MONTHS[Number(createDateFormat(date).split(`-`)[1]) - 1]} ${Number(createDateFormat(date).split(`-`)[2])}`;
+};
+
 export {
   getRandomIntegerNumber,
   getRandomArrayItem,
   setFirstLetterInUppercase,
   shuffleArray,
+  createDateFormat,
+  createMonthDayFormat,
 };

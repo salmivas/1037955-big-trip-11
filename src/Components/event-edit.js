@@ -8,8 +8,7 @@ import {setFirstLetterInUppercase} from "../utils/common";
 const createEventEditOfferMarkup = (offersType, offer, id) => {
   return (
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offersType}-${id}" type="checkbox"
-        name="event-offer-${offersType}">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offersType}-${id}" name="event-offer-${offersType}" type="checkbox" ${offer.isChecked ? `checked` : ``}>
       <label class="event__offer-label" for="event-offer-${offersType}-${id}">
         <span class="event__offer-title">${offer.title}</span>
         &plus;

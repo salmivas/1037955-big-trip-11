@@ -24,192 +24,236 @@ const offers = {
     offers: [
       {
         "title": `Upgrade to business class`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Choose a radio station`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Order Uber`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Talk to driver`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }
-    ].slice(0, getRandomIntegerNumber(0, 4)),
+    ]
   },
   "bus": {
     type: `bus`,
     offers: [
       {
         "title": `Book tickets`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Switch to comfort seats`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Air conditioner`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Include TV`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }
-    ].slice(0, getRandomIntegerNumber(0, 4)),
+    ]
   },
   "train": {
     type: `train`,
     offers: [
       {
         "title": `Book tickets`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Comfort class`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Include meals`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Include TV`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Include shower`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }
-    ].slice(0, getRandomIntegerNumber(0, 5)),
+    ]
   },
   "ship": {
     type: `ship`,
     offers: [
       {
         "title": `Book tickets`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `First class`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Free alcohol`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Сaptain's cabin visit`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `One time honk`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }
-    ].slice(0, getRandomIntegerNumber(0, 5)),
+    ]
   },
   "transport": {
     type: `transport`,
     offers: [
       {
         "title": `Book tickets`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Porter service`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Taxi to station`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Include meals`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       },
-    ].slice(0, getRandomIntegerNumber(0, 4)),
+    ]
   },
   "drive": {
     type: `drive`,
     offers: [
       {
         "title": `Fuel`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Toll highway`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Meals`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Rent a car`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       },
-    ].slice(0, getRandomIntegerNumber(0, 4)),
+    ]
   },
   "flight": {
     type: `flight`,
     offers: [
       {
         "title": `Add luggage`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Switch to comfort class`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Add meal`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Choose seats`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Travel by train`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       },
-    ].slice(0, getRandomIntegerNumber(0, 5)),
+    ]
   },
   "check-in": {
     type: `check-in`,
     offers: [
       {
         "title": `Add breakfast`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `King bed`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Add meal`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Switch to lux`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Bar`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       },
-    ].slice(0, getRandomIntegerNumber(0, 5)),
+    ]
   },
   "sightseeing": {
     type: `sightseeing`,
     offers: [
       {
         "title": `Book tickets`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Lunch in a city`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Photosession`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Guide services`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       },
-    ].slice(0, getRandomIntegerNumber(0, 4)),
+    ]
   },
   "restaurant": {
     type: `restaurant`,
     offers: [
       {
         "title": `Smorgasbord`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Fish menu`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Meat menu`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       }, {
         "title": `Vegetarian menu`,
-        "price": getRandomIntegerNumber(10, 300)
+        "price": getRandomIntegerNumber(10, 300),
+        "isChecked": Math.random() > 0.5 ? true : false,
       },
-    ].slice(0, getRandomIntegerNumber(0, 4)),
+    ]
   },
 
 };

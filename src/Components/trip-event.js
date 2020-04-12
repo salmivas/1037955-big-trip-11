@@ -8,17 +8,18 @@ import {
 
 const createTripEventOfferMarkup = (offer) => {
   return (
-    `<li class="event__offer">
-      <span class="event__offer-title">${offer.title}</span>
-      +
-      €&nbsp;<span class="event__offer-price">${offer.price}</span>
-    </li>`
+    offer.isChecked ?
+      `<li class="event__offer">
+        <span class="event__offer-title">${offer.title}</span>
+        +
+        €&nbsp;<span class="event__offer-price">${offer.price}</span>
+      </li>` : ``
   );
 };
 
 const createTripEventMarkup = (event) => {
   const {type, basePrice, dateFrom, dateTo, destination, offers} = event;
-  const offersMarkup = offers.offers.slice(0, 3).map((it) => createTripEventOfferMarkup(it)).join(`\n`);
+  const offersMarkup = offers.offers.map((it) => createTripEventOfferMarkup(it)).slice(0, 3).join(`\n`);
   return (
     `<li class="trip-events__item">
       <div class="event">
