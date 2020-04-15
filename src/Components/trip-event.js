@@ -20,7 +20,7 @@ const createTripEventOfferMarkup = (offer) => {
 
 const createTripEventMarkup = (event) => {
   const {type, basePrice, dateFrom, dateTo, destination, offers} = event;
-  const offersMarkup = offers.offers.map((it) => createTripEventOfferMarkup(it)).slice(0, 3).join(`\n`);
+  const offersMarkup = offers.offers.filter((it) => it.isChecked).map((it) => createTripEventOfferMarkup(it)).slice(0, 3).join(`\n`);
   return (
     `<li class="trip-events__item">
       <div class="event">
