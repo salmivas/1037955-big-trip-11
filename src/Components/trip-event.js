@@ -5,6 +5,7 @@ import {
   calculateDuration,
   createTimeDurationFormat
 } from "../utils/trip-event";
+import {createElement} from "../utils/common";
 
 const createTripEventOfferMarkup = (offer) => {
   return (
@@ -19,7 +20,7 @@ const createTripEventOfferMarkup = (offer) => {
 
 const createTripEventMarkup = (event) => {
   const {type, basePrice, dateFrom, dateTo, destination, offers} = event;
-  const offersMarkup = offers.offers.map((it) => createTripEventOfferMarkup(it)).slice(0, 3).join(`\n`);
+  const offersMarkup = offers.offers.filter((it) => it.isChecked).map((it) => createTripEventOfferMarkup(it)).slice(0, 3).join(`\n`);
   return (
     `<li class="trip-events__item">
       <div class="event">
@@ -54,4 +55,25 @@ const createTripEventMarkup = (event) => {
   );
 };
 
-export default createTripEventMarkup;
+export default class TripEvent {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripEventMarkup(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

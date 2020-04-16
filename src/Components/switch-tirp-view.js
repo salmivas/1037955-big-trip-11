@@ -1,3 +1,5 @@
+import {createElement} from "../utils/common";
+
 const createSwitchTripViewMarkup = () => {
   return (
     `<nav class="trip-controls__trip-tabs  trip-tabs">
@@ -7,4 +9,24 @@ const createSwitchTripViewMarkup = () => {
   );
 };
 
-export default createSwitchTripViewMarkup;
+export default class SwitchTripView {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createSwitchTripViewMarkup();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

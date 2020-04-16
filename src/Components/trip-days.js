@@ -1,15 +1,29 @@
-import createTripDayMarkup from "./trip-day";
+import {createElement} from "../utils/common";
 
-const createTripDaysMarkup = (days, events) => {
-  const daysMarkup = days.map((day) => {
-    const dayEvents = events.filter((event) => event.dateFrom.toDateString() === new Date(day.date).toDateString());
-    return createTripDayMarkup(day, dayEvents);
-  }).join(`\n`);
+const createTripDaysMarkup = () => {
   return (
-    `<ul class="trip-days">
-      ${daysMarkup}
-    </ul>`
+    `<ul class="trip-days"></ul>`
   );
 };
 
-export default createTripDaysMarkup;
+export default class TripDays {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripDaysMarkup();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
