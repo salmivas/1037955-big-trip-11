@@ -4,9 +4,9 @@ const getCost = (events) => {
   const totalByBasePrice = events.reduce((acc, cur) => acc + cur.basePrice, 0);
   const totalByAdditionalOffersPrice = events.reduce((acc, cur) => acc + cur.offers.offers.reduce((accO, curO) => accO + curO.isChecked ? curO.price : 0, 0), 0);
   return {
-    totalByBasePrice,
-    totalByAdditionalOffersPrice,
-    sumTotal: totalByBasePrice + totalByAdditionalOffersPrice,
+    totalByBasePrice: events.length > 0 ? totalByBasePrice : 0,
+    totalByAdditionalOffersPrice: events.length > 0 ? totalByAdditionalOffersPrice : 0,
+    sumTotal: events.length > 0 ? totalByBasePrice + totalByAdditionalOffersPrice : 0,
   };
 };
 
@@ -24,8 +24,8 @@ const getTravelDatesString = (events) => {
 const createRouteAndCostData = (events) => {
   return {
     cost: getCost(events),
-    pointsString: getRoutePointsString(events),
-    travelDatesString: getTravelDatesString(events),
+    pointsString: events.length > 0 ? getRoutePointsString(events) : ``,
+    travelDatesString: events.length > 0 ? getTravelDatesString(events) : ``,
   };
 };
 
