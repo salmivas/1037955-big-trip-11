@@ -1,4 +1,4 @@
-import {createElement} from "../utils/common";
+import AbstractComponent from "./abstract-component";
 
 const createTripDayMarkup = (day) => {
   const {date, dayDate, dayNumber} = day;
@@ -15,25 +15,14 @@ const createTripDayMarkup = (day) => {
   );
 };
 
-export default class TripDay {
+export default class TripDay extends AbstractComponent {
   constructor(day) {
+    super();
+
     this._day = day;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripDayMarkup(this._day);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

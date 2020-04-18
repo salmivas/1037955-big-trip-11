@@ -5,7 +5,7 @@ import {
   calculateDuration,
   createTimeDurationFormat
 } from "../utils/trip-event";
-import {createElement} from "../utils/common";
+import AbstractComponent from "./abstract-component";
 
 const createTripEventOfferMarkup = (offer) => {
   return (
@@ -55,25 +55,14 @@ const createTripEventMarkup = (event) => {
   );
 };
 
-export default class TripEvent {
+export default class TripEvent extends AbstractComponent {
   constructor(event) {
+    super();
+
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripEventMarkup(this._event);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
