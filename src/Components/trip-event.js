@@ -4,7 +4,7 @@ import {
   createTimeFormat,
   calculateDuration,
   createTimeDurationFormat
-} from "../utils/trip-event";
+} from "../utils/components/trip-event";
 import AbstractComponent from "./abstract-component";
 
 const createTripEventOfferMarkup = (offer) => {
@@ -64,5 +64,9 @@ export default class TripEvent extends AbstractComponent {
 
   getTemplate() {
     return createTripEventMarkup(this._event);
+  }
+
+  setRollupButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
   }
 }

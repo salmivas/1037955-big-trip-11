@@ -1,7 +1,7 @@
 import {
   createMonthDayFormat,
   createDateFormat
-} from "./common";
+} from "../common";
 
 const createDaysData = (eventsArray) => {
   return Array.from(new Set(eventsArray

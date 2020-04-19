@@ -1,5 +1,5 @@
-import {setFirstLetterInUppercase} from "../utils/common";
-import {TIME_IN_MS} from "../const";
+import {setFirstLetterInUppercase} from "../common";
+import {TIME_IN_MS} from "../../const";
 
 const createEventTitle = (type, destination) => {
   return `${setFirstLetterInUppercase(type)} ${(type === `check-in`) || (type === `sightseeing`) || (type === `restaurant`) ? `in` : `to`}${destination ? ` ${destination}` : ``}`;

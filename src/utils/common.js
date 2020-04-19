@@ -1,12 +1,5 @@
 import {MONTHS} from "../const";
 
-const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  AFTEREND: `afterend`,
-  BEFOREBEGIN: `beforebegin`,
-  BEFOREEND: `beforeend`,
-};
-
 const getRandomIntegerNumber = (min, max) => {
   return min + Math.floor(max * Math.random());
 };
@@ -39,30 +32,6 @@ const createMonthDayFormat = (date) => {
     `${MONTHS[Number(createDateFormat(date).split(`-`)[1]) - 1]} ${Number(createDateFormat(date).split(`-`)[2])}`;
 };
 
-const createElement = (template) => {
-  const newElement = document.createElement(`div`);
-  newElement.innerHTML = template;
-
-  return newElement.firstChild;
-};
-
-const render = (container, element, place) => {
-  switch (place) {
-    case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
-      break;
-    case RenderPosition.AFTEREND:
-      container.after(element);
-      break;
-    case RenderPosition.BEFOREEND:
-      container.append(element);
-      break;
-    case RenderPosition.BEFOREGEGIN:
-      container.before(element);
-      break;
-  }
-};
-
 export {
   getRandomIntegerNumber,
   getRandomArrayItem,
@@ -70,7 +39,4 @@ export {
   shuffleArray,
   createDateFormat,
   createMonthDayFormat,
-  createElement,
-  RenderPosition,
-  render,
 };

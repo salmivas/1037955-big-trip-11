@@ -113,5 +113,3 @@ const generateEvents = (count) => {
 const events = generateEvents(20);
 
 export {events, cities};
-
-

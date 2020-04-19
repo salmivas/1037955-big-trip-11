@@ -1,4 +1,4 @@
-import {createMonthDayFormat} from "./common";
+import {createMonthDayFormat} from "../common";
 
 const getCost = (events) => {
   const totalByBasePrice = events.reduce((acc, cur) => acc + cur.basePrice, 0);

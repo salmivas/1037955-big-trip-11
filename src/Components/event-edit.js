@@ -1,7 +1,7 @@
 import {
   createEventTitle,
   createTimeInputFormat,
-} from "../utils/trip-event";
+} from "../utils/components/trip-event";
 import {ACTIVITIES_BY_TYPE} from "../const";
 import {setFirstLetterInUppercase} from "../utils/common";
 import AbstractComponent from "./abstract-component";
@@ -175,5 +175,9 @@ export default class EventEdit extends AbstractComponent {
 
   getTemplate() {
     return createEventEditMarkup(this._event, this._cities);
+  }
+
+  setEditFormSubmitHandler(handler) {
+    this.getElement().querySelector(`form`).addEventListener(`submit`, handler);
   }
 }
