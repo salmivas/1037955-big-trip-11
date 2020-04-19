@@ -40,40 +40,39 @@ const renderEvent = (eventElement, event, cities) => {
   render(eventElement, tripEventComponent, RenderPosition.BEFOREEND);
 };
 
-const renderTripDays = (days, events, cities) => {
-  const tripEventsHeader = document.querySelector(`.trip-events h2`);
-  if (days.length > 0) {
-    render(tripEventsHeader, new SortComponent(), RenderPosition.AFTEREND);
-    const tripSort = document.querySelector(`.trip-sort`);
-    render(tripSort, new TripDaysComponent(), RenderPosition.AFTEREND);
-  } else {
-    render(tripEventsHeader, new NoEventsComponent(), RenderPosition.AFTEREND);
-  }
-
-  days.forEach((day) => {
-    const dayEvents = events.filter((event) => event.dateFrom.toDateString() === new Date(day.date).toDateString());
-    const tripDayComponent = new TripDayComponent(day);
-    const dayElement = tripDayComponent.getElement().querySelector(`.trip-events__list`);
-    const tripDaysElement = document.querySelector(`.trip-days`);
-
-    render(tripDaysElement, tripDayComponent, RenderPosition.BEFOREEND);
-    dayEvents.forEach((event) => {
-      renderEvent(dayElement, event, cities);
-    });
-  });
-};
-
 class TripController {
   /**
-   * Makes a trip component (route and sort) and adds it on the page
+   * Makes the trip component (route and sort) and adds it on the page
    * @param {Element} container An element that the controller will draw everything to
    */
   constructor(container) {
     this._container = container;
+
+    this._sortComponent = new SortComponent();
+    this._noEventsComponent = new NoEventsComponent();
+    this._tripDaysComponent = new TripDaysComponent();
   }
 
   render(days, events, cities) {
-    renderTripDays(days, events, cities);
+    if (days.length > 0) {
+      render(this._container, this._sortComponent, RenderPosition.AFTEREND);
+      const tripSort = document.querySelector(`.trip-sort`);
+      render(tripSort, this._tripDaysComponent, RenderPosition.AFTEREND);
+    } else {
+      render(this._container, this._noEventsComponent, RenderPosition.AFTEREND);
+    }
+
+    days.forEach((day) => {
+      const dayEvents = events.filter((event) => event.dateFrom.toDateString() === new Date(day.date).toDateString());
+      const tripDayComponent = new TripDayComponent(day);
+      const dayElement = tripDayComponent.getElement().querySelector(`.trip-events__list`);
+      const tripDaysElement = document.querySelector(`.trip-days`);
+
+      render(tripDaysElement, tripDayComponent, RenderPosition.BEFOREEND);
+      dayEvents.forEach((event) => {
+        renderEvent(dayElement, event, cities);
+      });
+    });
   }
 }
 
