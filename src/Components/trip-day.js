@@ -1,13 +1,19 @@
 import AbstractComponent from "./abstract-component";
 
-const createTripDayMarkup = (day) => {
+const createDayInfoMarkup = (day) => {
   const {date, dayDate, dayNumber} = day;
+  return (
+    `<span class="day__counter">${dayNumber}</span>
+     <time class="day__date" datetime="${date}">${dayDate}</time>`
+  );
+};
 
+const createTripDayMarkup = (day) => {
+  const dayInfoMarkup = day ? createDayInfoMarkup(day) : ``;
   return (
     `<li class="trip-days__item  day">
       <div class="day__info">
-        <span class="day__counter">${dayNumber}</span>
-        <time class="day__date" datetime="${date}">${dayDate}</time>
+        ${dayInfoMarkup}
       </div>
 
       <ul class="trip-events__list"></ul>
