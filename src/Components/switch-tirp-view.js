@@ -1,4 +1,4 @@
-import {createElement} from "../utils/common";
+import AbstractComponent from "./abstract-component";
 
 const createSwitchTripViewMarkup = () => {
   return (
@@ -9,24 +9,8 @@ const createSwitchTripViewMarkup = () => {
   );
 };
 
-export default class SwitchTripView {
-  constructor() {
-    this._element = null;
-  }
-
+export default class SwitchTripView extends AbstractComponent {
   getTemplate() {
     return createSwitchTripViewMarkup();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

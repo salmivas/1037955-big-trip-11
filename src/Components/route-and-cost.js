@@ -1,4 +1,4 @@
-import {createElement} from "../utils/common";
+import AbstractComponent from "./abstract-component";
 
 const createTripInfoMainMarkup = (pointsString, travelDatesString) => {
   return pointsString && travelDatesString && (
@@ -25,25 +25,14 @@ const createRouteAndCostMarkup = (routeAndCostData) => {
   );
 };
 
-export default class RouteAndCost {
+export default class RouteAndCost extends AbstractComponent {
   constructor(routeAndCostData) {
+    super();
+
     this._routeAndCostData = routeAndCostData;
-    this._element = null;
   }
 
   getTemplate() {
     return createRouteAndCostMarkup(this._routeAndCostData);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
