@@ -1,8 +1,8 @@
-import {setFirstLetterInUppercase} from "../common";
+import {capitalize} from "../common";
 import {TIME_IN_MS} from "../../const";
 
 const createEventTitle = (type, destination) => {
-  return `${setFirstLetterInUppercase(type)} ${(type === `check-in`) || (type === `sightseeing`) || (type === `restaurant`) ? `in` : `to`}${destination ? ` ${destination}` : ``}`;
+  return `${capitalize(type)} ${(type === `check-in`) || (type === `sightseeing`) || (type === `restaurant`) ? `in` : `to`}${destination ? ` ${destination}` : ``}`;
 };
 
 const createDateTimeFormat = (time) => time.toISOString().split(`.`).slice(0, -1).toString();

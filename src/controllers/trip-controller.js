@@ -9,22 +9,16 @@ import {SortType} from "../utils/components/sort";
 import {calculateDuration} from "../utils/components/trip-event";
 
 const getSortedEvents = (events, sortType) => {
-  let sortedEvents = [];
-  const shownEvents = events.slice();
+  const sortByTime = (a, b) => calculateDuration(b.dateFrom, b.dateTo) - calculateDuration(a.dateFrom, a.dateTo);
+  const sortByPrice = (a, b) => b.basePrice - a.basePrice;
 
-  switch (sortType) {
-    case SortType.TIME_DOWN:
-      sortedEvents = events.slice().sort((a, b) => calculateDuration(b.dateFrom, b.dateTo) - calculateDuration(a.dateFrom, a.dateTo));
-      break;
-    case SortType.PRICE_DOWN:
-      sortedEvents = events.slice().sort((a, b) => b.basePrice - a.basePrice);
-      break;
-    case SortType.DEFAULT:
-      sortedEvents = shownEvents;
-      break;
-  }
+  const eventsBySortType = {
+    [SortType.TIME_DOWN]: events.slice().sort(sortByTime),
+    [SortType.PRICE_DOWN]: events.slice().sort(sortByPrice),
+    [SortType.DEFAULT]: events,
+  };
 
-  return sortedEvents;
+  return eventsBySortType[sortType];
 };
 
 const renderEvent = (eventElement, event, cities) => {
