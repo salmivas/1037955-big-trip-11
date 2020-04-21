@@ -3,7 +3,7 @@ import {
   createTimeInputFormat,
 } from "../utils/components/trip-event";
 import {ACTIVITIES_BY_TYPE} from "../const";
-import {setFirstLetterInUppercase} from "../utils/common";
+import {capitalize} from "../utils/common";
 import AbstractComponent from "./abstract-component";
 
 const createEventEditOfferMarkup = (offersType, offer, id) => {
@@ -24,7 +24,7 @@ const createEventTypeItemMarkup = (activityType, currentActivityType, id) => {
     `<div class="event__type-item">
       <input id="event-type-${activityType}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${activityType}" ${currentActivityType === activityType ? `checked` : ``}>
       <label class="event__type-label  event__type-label--${activityType}"
-        for="event-type-${activityType}-${id}">${setFirstLetterInUppercase(activityType)}</label>
+        for="event-type-${activityType}-${id}">${capitalize(activityType)}</label>
     </div>`
   );
 };

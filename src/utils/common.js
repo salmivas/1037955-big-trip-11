@@ -19,7 +19,7 @@ const getRandomArrayItem = (array) => {
   return array[randomIndex];
 };
 
-const setFirstLetterInUppercase = (anyString) => {
+const capitalize = (anyString) => {
   return anyString.replace(/^./, (str) => str.toUpperCase());
 };
 
@@ -35,7 +35,7 @@ const createMonthDayFormat = (date) => {
 export {
   getRandomIntegerNumber,
   getRandomArrayItem,
-  setFirstLetterInUppercase,
+  capitalize,
   shuffleArray,
   createDateFormat,
   createMonthDayFormat,
