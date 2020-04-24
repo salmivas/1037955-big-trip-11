@@ -2,14 +2,14 @@ import TripEventComponent from "../Components/trip-event";
 import EventEditComponent from "../Components/event-edit";
 import {render, RenderPosition, replace} from "../utils/render";
 
-class EventController {
+export default class EventController {
   constructor(container) {
     this._container = container;
 
     this._eventComponent = null;
     this._eventEditComponent = null;
 
-    this._onEscDown = this._onEscDown.bind(this);
+    this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
   render(event, cities) {
@@ -27,7 +27,7 @@ class EventController {
       document.removeEventListener(`keydown`, this._onEscKeyDown);
     });
 
-    render(this._container, this.eventComponent, RenderPosition.BEFOREEND);
+    render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
   }
 
   _replaceEventToEdit() {
@@ -47,5 +47,3 @@ class EventController {
     }
   }
 }
-
-export default EventController;

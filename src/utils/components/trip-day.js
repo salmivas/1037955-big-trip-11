@@ -3,15 +3,12 @@ import {
   createDateFormat
 } from "../common";
 
-const createDaysData = (eventsArray) => {
-  return Array.from(new Set(eventsArray
-    .map(
-        (event) => createDateFormat(event.dateFrom)
-    )))
-  .map((date, i) => {
+const createDaysData = (events) => {
+  return Array.from(new Set(events.map((event) => event.dateFrom.toDateString()))).map((date, i) => {
     return {
       date,
-      dayDate: createMonthDayFormat(date),
+      dateTime: createDateFormat(new Date(date)),
+      dayDate: createMonthDayFormat(new Date(date)),
       dayNumber: ++i,
     };
   });
