@@ -10,7 +10,6 @@ import {render, RenderPosition} from "./utils/render";
 const days = createDaysData(events);
 const routeAndCostList = createRouteAndCostData(events);
 
-
 const tripMain = document.querySelector(`.trip-main`);
 const tripViewSwitcher = document.querySelector(`.trip-controls h2:first-child`);
 const tripFilters = document.querySelector(`.trip-controls h2:last-child`);

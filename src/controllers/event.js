@@ -3,8 +3,9 @@ import EventEditComponent from "../Components/event-edit";
 import {render, RenderPosition, replace} from "../utils/render";
 
 export default class EventController {
-  constructor(container) {
+  constructor(container, onDataChange) {
     this._container = container;
+    this._onDataChange = onDataChange;
 
     this._eventComponent = null;
     this._eventEditComponent = null;
@@ -25,6 +26,10 @@ export default class EventController {
       evt.preventDefault();
       this._replaceEditToEvent();
       document.removeEventListener(`keydown`, this._onEscKeyDown);
+    });
+
+    this._eventEditComponent.setFavoriteButtonClickHandler(() => {
+      this._onDataChange(event, Object.assign(event, {isFavorite: !event.isFavorite}));
     });
 
     render(this._container, this._eventComponent, RenderPosition.BEFOREEND);

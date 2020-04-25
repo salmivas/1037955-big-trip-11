@@ -180,4 +180,8 @@ export default class EventEdit extends AbstractComponent {
   setEditFormSubmitHandler(handler) {
     this.getElement().querySelector(`form`).addEventListener(`submit`, handler);
   }
+
+  setFavoriteButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, handler);
+  }
 }

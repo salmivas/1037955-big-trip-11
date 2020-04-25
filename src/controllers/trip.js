@@ -27,9 +27,9 @@ const renderTripDay = (container, day) => {
   return currentDayEventsContainer;
 };
 
-const renderEvents = (container, events, cities) => {
+const renderEvents = (container, events, cities, onDataChange) => {
   return events.map((event) => {
-    const eventController = new EventController(renderTripDay(container));
+    const eventController = new EventController(renderTripDay(container), onDataChange);
 
     eventController.render(event, cities);
 
@@ -37,14 +37,14 @@ const renderEvents = (container, events, cities) => {
   });
 };
 
-const renderEventsPerDay = (container, events, cities, days) => {
+const renderEventsPerDay = (container, events, cities, days, onDataChange) => {
   const newEvents = [];
   days.forEach((day) => {
     const currentDayEvents = events.filter((event) => event.dateFrom.toDateString() === new Date(day.date).toDateString());
     const currentDayEventsContainer = renderTripDay(container, day);
 
     currentDayEvents.forEach((event) => {
-      const eventController = new EventController(currentDayEventsContainer);
+      const eventController = new EventController(currentDayEventsContainer, onDataChange);
 
       eventController.render(event, cities);
 
@@ -74,6 +74,7 @@ export default class TripController {
     this._tripDaysContainer = this._tripDaysComponent.getElement();
     this._tripSortContainer = this._sortComponent.getElement();
 
+    this._onDataChange = this._onDataChange.bind(this);
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
@@ -90,7 +91,7 @@ export default class TripController {
       render(this._container, this._noEventsComponent, RenderPosition.AFTEREND);
     }
 
-    const newEvents = renderEventsPerDay(this._tripDaysContainer, this._events, this._cities, this._days);
+    const newEvents = renderEventsPerDay(this._tripDaysContainer, this._events, this._cities, this._days, this._onDataChange);
     this._eventControllers = newEvents;
   }
 
@@ -99,11 +100,23 @@ export default class TripController {
     this._tripDaysContainer.innerHTML = ``;
 
     if (sortType === SortType.DEFAULT) {
-      const newEvents = renderEventsPerDay(this._tripDaysContainer, sortedEvents, this._cities, this._days);
+      const newEvents = renderEventsPerDay(this._tripDaysContainer, sortedEvents, this._cities, this._days, this._onDataChange);
       this._eventControllers = newEvents;
       return;
     }
-    const newEvents = renderEvents(this._tripDaysContainer, sortedEvents, this._cities);
+    const newEvents = renderEvents(this._tripDaysContainer, sortedEvents, this._cities, this._onDataChange);
     this._eventControllers = newEvents;
+  }
+
+  _onDataChange(oldData, newData) {
+    const index = this._events.findIndex((it) => it === oldData);
+
+    if (index === -1) {
+      return;
+    }
+
+    this._events = [].concat(this._events.slice(0, index), newData, this._events.slice(index + 1));
+
+    this._eventControllers[index].render(this._events[index], this._cities);
   }
 }
