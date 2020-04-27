@@ -5,7 +5,6 @@ import {
 import {ACTIVITIES_BY_TYPE} from "../const";
 import {capitalize} from "../utils/common";
 import AbstractSmartComponent from "./abstract-smart-component";
-// TODO. Requested explanation from the Academy
 import {offers as availableOffers, destinations} from "../mock/event";
 
 const createEventEditOfferMarkup = (offersType, offer, id) => {

@@ -45,8 +45,6 @@ const replace = (newComponent, oldComponent) => {
   }
 };
 
-// TODO. https://up.htmlacademy.ru/ecmascript/11/demos/3643#13
-// Not used in the project so far
 const remove = (component) => {
   component.getElement().remove();
   component.removeElement();
