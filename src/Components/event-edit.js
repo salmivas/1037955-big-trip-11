@@ -223,6 +223,7 @@ export default class EventEdit extends AbstractSmartComponent {
       let isInputEvent = (Object.prototype.toString.call(evt).indexOf(`InputEvent`) > -1);
       if (!isInputEvent) {
         this._event.destination = destinations[evt.target.value];
+
         this.rerender();
       }
     }, false);

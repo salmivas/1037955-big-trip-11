@@ -2,11 +2,17 @@ import TripEventComponent from "../Components/trip-event";
 import EventEditComponent from "../Components/event-edit";
 import {render, RenderPosition, replace} from "../utils/render";
 
+const Mode = {
+  DEFAULT: `default`,
+  EDIT: `edit`,
+};
+
 export default class EventController {
-  constructor(container, onDataChange) {
+  constructor(container, onDataChange, onViewChange) {
     this._container = container;
     this._onDataChange = onDataChange;
-
+    this._onViewChange = onViewChange;
+    this._mode = Mode.DEFAULT;
     this._eventComponent = null;
     this._eventEditComponent = null;
 
@@ -31,15 +37,25 @@ export default class EventController {
     this._eventEditComponent.setFavoriteButtonClickHandler(() => {
       this._onDataChange(event, Object.assign(event, {isFavorite: !event.isFavorite}));
     });
+
     render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
   }
 
+  setDefaultView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._replaceEditToEvent();
+    }
+  }
+
   _replaceEventToEdit() {
+    this._onViewChange();
     replace(this._eventEditComponent, this._eventComponent);
+    this._mode = Mode.EDIT;
   }
 
   _replaceEditToEvent() {
     replace(this._eventComponent, this._eventEditComponent);
+    this._mode = Mode.DEFAULT;
   }
 
   _onEscKeyDown(evt) {
