@@ -4,7 +4,9 @@ import {
 } from "../utils/components/trip-event";
 import {ACTIVITIES_BY_TYPE} from "../const";
 import {capitalize} from "../utils/common";
-import AbstractComponent from "./abstract-component";
+import AbstractSmartComponent from "./abstract-smart-component";
+// TODO. Requested explanation from the Academy
+import {offers as availableOffers, destinations} from "../mock/event";
 
 const createEventEditOfferMarkup = (offersType, offer, id) => {
   return (
@@ -165,23 +167,64 @@ const createEventEditMarkup = (event, cities) => {
   );
 };
 
-export default class EventEdit extends AbstractComponent {
+export default class EventEdit extends AbstractSmartComponent {
   constructor(event, cities) {
     super();
 
     this._event = event;
     this._cities = cities;
+    this._submitHandler = null;
+    this._favoriteBottonClickHandler = null;
+
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
     return createEventEditMarkup(this._event, this._cities);
   }
 
-  setEditFormSubmitHandler(handler) {
+  recoveryListeners() {
+    this.setSubmitHandler(this._submitHandler);
+    this.setFavoriteButtonClickHandler(this._favoriteBottonClickHandler);
+    this._subscribeOnEvents();
+  }
+
+  rerender() {
+    super.rerender();
+  }
+
+  setSubmitHandler(handler) {
     this.getElement().querySelector(`form`).addEventListener(`submit`, handler);
+
+    this._submitHandler = handler;
   }
 
   setFavoriteButtonClickHandler(handler) {
     this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, handler);
+
+    this._favoriteBottonClickHandler = handler;
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+    const eventsTypeInputList = element.querySelectorAll(`.event__type-input`);
+    const eventInputDestination = element.querySelector(`.event__input--destination`);
+
+    for (const eventTypeInput of eventsTypeInputList) {
+      eventTypeInput.addEventListener(`change`, (evt) => {
+        this._event.type = evt.target.value;
+        this._event.offers = availableOffers[evt.target.value];
+
+        this.rerender();
+      });
+    }
+
+    eventInputDestination.addEventListener(`input`, (evt) => {
+      let isInputEvent = (Object.prototype.toString.call(evt).indexOf(`InputEvent`) > -1);
+      if (!isInputEvent) {
+        this._event.destination = destinations[evt.target.value];
+        this.rerender();
+      }
+    }, false);
   }
 }

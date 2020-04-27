@@ -22,7 +22,7 @@ export default class EventController {
       document.addEventListener(`keydown`, this._onEscKeyDown);
     });
 
-    this._eventEditComponent.setEditFormSubmitHandler((evt) => {
+    this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
       this._replaceEditToEvent();
       document.removeEventListener(`keydown`, this._onEscKeyDown);
@@ -31,7 +31,6 @@ export default class EventController {
     this._eventEditComponent.setFavoriteButtonClickHandler(() => {
       this._onDataChange(event, Object.assign(event, {isFavorite: !event.isFavorite}));
     });
-
     render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
   }
 

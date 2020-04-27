@@ -70,7 +70,6 @@ export default class TripController {
     this._noEventsComponent = new NoEventsComponent();
     this._tripDaysComponent = new TripDaysComponent();
 
-    // TODO. Mentor. Ask about whether it would be useful
     this._tripDaysContainer = this._tripDaysComponent.getElement();
     this._tripSortContainer = this._sortComponent.getElement();
 
@@ -116,7 +115,5 @@ export default class TripController {
     }
 
     this._events = [].concat(this._events.slice(0, index), newData, this._events.slice(index + 1));
-
-    this._eventControllers[index].render(this._events[index], this._cities);
   }
 }

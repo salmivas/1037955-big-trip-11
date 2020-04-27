@@ -1,7 +1,6 @@
 import {
   getRandomIntegerNumber,
   getRandomArrayItem,
-  shuffleArray,
 } from "../utils/common";
 import {TYPES_OF_ACTIVITY} from "../const";
 
@@ -71,15 +70,15 @@ const getRandomPhotoArray = (destinationName) => {
   });
 };
 
-const generateDestination = (destinationName) => {
-  const generatedDescription = destinationDescription.slice(getRandomIntegerNumber(0, destinationDescription.length - 1), destinationDescription.length);
-  shuffleArray(generatedDescription);
-  return {
-    description: generatedDescription.join(` `),
-    name: destinationName,
-    pictures: getRandomPhotoArray(destinationName),
-  };
-};
+const destinations = cities.reduce((obj, key) => Object.assign(obj, {
+  [key]: {
+    name: key,
+    description: destinationDescription.slice(getRandomIntegerNumber(0, destinationDescription.length - 1), destinationDescription.length).join(` `),
+    pictures: getRandomPhotoArray(key),
+  }
+}), {});
+
+const offers = getOffers(offersTitles);
 
 const generateEvent = (time = getRandomDate()) => {
   const startTime = time;
@@ -95,10 +94,10 @@ const generateEvent = (time = getRandomDate()) => {
     basePrice: getRandomIntegerNumber(100, 1000),
     dateFrom: startTime,
     dateTo: endTime,
-    destination: generateDestination(getRandomArrayItem(cities)),
+    destination: destinations[getRandomArrayItem(cities)],
     id: getRandomIntegerNumber(0, Number.MAX_SAFE_INTEGER),
     isFavorite: Math.random() > 0.8 ? true : false,
-    offers: getOffers(offersTitles)[typeOfEvent],
+    offers: offers[typeOfEvent],
     type: typeOfEvent,
   };
 };
@@ -112,4 +111,4 @@ const generateEvents = (count) => {
 
 const events = generateEvents(20);
 
-export {events, cities};
+export {events, cities, offers, destinations};
