@@ -1,10 +1,10 @@
 import AbstractComponent from "./abstract-component";
 
 const createDayInfoMarkup = (day) => {
-  const {date, dayDate, dayNumber} = day;
+  const {dateTime, dayDate, dayNumber} = day;
   return (
     `<span class="day__counter">${dayNumber}</span>
-     <time class="day__date" datetime="${date}">${dayDate}</time>`
+     <time class="day__date" datetime="${dateTime}">${dayDate}</time>`
   );
 };
 

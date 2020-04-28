@@ -4,20 +4,24 @@ const RenderPosition = {
   BEFOREBEGIN: `beforebegin`,
   BEFOREEND: `beforeend`,
 };
-
-const render = (container, element, place) => {
+/**
+ * @param {Element} container an HTML-element like <div> or <span>
+ * @param {Function} component a class with a certain constructor and methods. One of them (getTemplate()) returns a template of the component it represents
+ * @param {method} place inserts nodes in the certain place of the container
+ */
+const render = (container, component, place) => {
   switch (place) {
     case RenderPosition.AFTERBEGIN:
-      container.prepend(element.getElement());
+      container.prepend(component.getElement());
       break;
     case RenderPosition.AFTEREND:
-      container.after(element.getElement());
+      container.after(component.getElement());
       break;
     case RenderPosition.BEFOREEND:
-      container.append(element.getElement());
+      container.append(component.getElement());
       break;
     case RenderPosition.BEFOREGEGIN:
-      container.before(element.getElement());
+      container.before(component.getElement());
       break;
   }
 };
@@ -41,8 +45,6 @@ const replace = (newComponent, oldComponent) => {
   }
 };
 
-// TODO. https://up.htmlacademy.ru/ecmascript/11/demos/3643#13
-// Not used in the project so far
 const remove = (component) => {
   component.getElement().remove();
   component.removeElement();
