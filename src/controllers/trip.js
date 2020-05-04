@@ -41,6 +41,11 @@ const renderEventsPerDay = (container, events, cities, days, onDataChange, onVie
   const newEvents = [];
   days.forEach((day) => {
     const currentDayEvents = events.filter((event) => event.dateFrom.toDateString() === new Date(day.date).toDateString());
+
+    if (currentDayEvents.length === 0) {
+      return;
+    }
+
     const currentDayEventsContainer = renderTripDay(container, day);
 
     currentDayEvents.forEach((event) => {
@@ -58,13 +63,12 @@ export default class TripController {
   /**
    * Makes the trip component (route and sort) and adds it on the page
    * @param {Element} container An element that the controller will draw everything to
+   * @param {Events} eventsModel An instance of the Events class
    */
-  constructor(container) {
+  constructor(container, eventsModel) {
     this._container = container;
+    this._eventsModel = eventsModel;
 
-    this._events = [];
-    this._days = [];
-    this._cities = [];
     this._eventControllers = [];
     this._sortComponent = new SortComponent();
     this._noEventsComponent = new NoEventsComponent();
@@ -76,49 +80,73 @@ export default class TripController {
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
+    this._onFilterChange = this._onFilterChange.bind(this);
+
     this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
+    this._eventsModel.setFilterChangeHandler(this._onFilterChange);
   }
 
-  render(days, events, cities) {
-    this._events = events;
-    this._days = days;
-    this._cities = cities;
+  render() {
+    const events = this._eventsModel.getEvents();
 
-    if (days.length > 0) {
+    if (events.length > 0) {
       render(this._container, this._sortComponent, RenderPosition.AFTEREND);
       render(this._tripSortContainer, this._tripDaysComponent, RenderPosition.AFTEREND);
     } else {
       render(this._container, this._noEventsComponent, RenderPosition.AFTEREND);
     }
 
-    const newEvents = renderEventsPerDay(this._tripDaysContainer, this._events, this._cities, this._days, this._onDataChange, this._onViewChange);
+    this._renderEventsPerDay(events);
+  }
+
+  _removeEvents() {
+    this._eventControllers.forEach((eventController) => eventController.destroy());
+    this._eventControllers = [];
+    this._tripDaysContainer.innerHTML = ``;
+  }
+
+  _renderEventsPerDay(events) {
+    const days = this._eventsModel.getDays();
+    const cities = this._eventsModel.getCities();
+
+    const newEvents = renderEventsPerDay(this._tripDaysContainer, events, cities, days, this._onDataChange, this._onViewChange);
     this._eventControllers = newEvents;
   }
 
   _onSortTypeChange(sortType) {
-    const sortedEvents = getSortedEvents(this._events, sortType);
+    const events = this._eventsModel.getEvents();
+    const cities = this._eventsModel.getCities();
+
+    const sortedEvents = getSortedEvents(events, sortType);
     this._tripDaysContainer.innerHTML = ``;
 
     if (sortType === SortType.DEFAULT) {
-      const newEvents = renderEventsPerDay(this._tripDaysContainer, sortedEvents, this._cities, this._days, this._onDataChange, this._onViewChange);
-      this._eventControllers = newEvents;
+      this._renderEventsPerDay(sortedEvents);
       return;
     }
-    const newEvents = renderEvents(this._tripDaysContainer, sortedEvents, this._cities, this._onDataChange, this._onViewChange);
+    const newEvents = renderEvents(this._tripDaysContainer, sortedEvents, cities, this._onDataChange, this._onViewChange);
     this._eventControllers = newEvents;
   }
 
-  _onDataChange(oldData, newData) {
-    const index = this._events.findIndex((it) => it === oldData);
+  _updateEvents() {
+    this._removeEvents();
+    this._renderEventsPerDay(this._eventsModel.getEvents());
+  }
 
-    if (index === -1) {
+  _onDataChange(eventController, oldData, newData) {
+    const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
+
+    if (isSuccess && eventController !== null) {
+      eventController.render(newData);
       return;
     }
-
-    this._events = [].concat(this._events.slice(0, index), newData, this._events.slice(index + 1));
   }
 
   _onViewChange() {
     this._eventControllers.forEach((eventController) => eventController.setDefaultView());
+  }
+
+  _onFilterChange() {
+    this._updateEvents();
   }
 }

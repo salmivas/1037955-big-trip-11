@@ -1,18 +1,18 @@
 import RouteAndCostComponent from "../src/Components/route-and-cost";
 import SwitchTripViewComponent from "../src/Components/switch-tirp-view";
-import FiltersComponent from "../src/Components/filters";
+import FilterController from "../src/controllers/filter";
 import TripController from "./controllers/trip";
 import {events as mockedEvents, cities} from "./mock/event";
 import {createDaysData} from "./utils/components/trip-day";
 import {createRouteAndCostData} from "./utils/components/route-and-cost";
 import {render, RenderPosition} from "./utils/render";
-import Events from "./models/events";
+import EventsModel from "./models/events";
 
-const events = new Events();
-events.setEvents(mockedEvents);
-events._events; /*?*/
+const eventsModel = new EventsModel();
+eventsModel.setEvents(mockedEvents);
+eventsModel.setDays(createDaysData(mockedEvents));
+eventsModel.setCities(cities);
 
-const days = createDaysData(mockedEvents);
 const routeAndCostList = createRouteAndCostData(mockedEvents);
 
 const tripMain = document.querySelector(`.trip-main`);
@@ -22,7 +22,8 @@ const tripEventsHeader = document.querySelector(`.trip-events h2`);
 
 render(tripMain, new RouteAndCostComponent(routeAndCostList), RenderPosition.AFTERBEGIN);
 render(tripViewSwitcher, new SwitchTripViewComponent(), RenderPosition.AFTEREND);
-render(tripFilters, new FiltersComponent(), RenderPosition.AFTEREND);
+const filterController = new FilterController(tripFilters, eventsModel);
+filterController.render();
 
-const tripComponent = new TripController(tripEventsHeader);
-tripComponent.render(days, mockedEvents, cities);
+const tripController = new TripController(tripEventsHeader, eventsModel);
+tripController.render();

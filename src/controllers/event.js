@@ -1,6 +1,6 @@
 import TripEventComponent from "../Components/trip-event";
 import EventEditComponent from "../Components/event-edit";
-import {render, RenderPosition, replace} from "../utils/render";
+import {render, RenderPosition, replace, remove} from "../utils/render";
 
 const Mode = {
   DEFAULT: `default`,
@@ -35,7 +35,7 @@ export default class EventController {
     });
 
     this._eventEditComponent.setFavoriteButtonClickHandler(() => {
-      this._onDataChange(event, Object.assign(event, {isFavorite: !event.isFavorite}));
+      this._onDataChange(null, event, Object.assign(event, {isFavorite: !event.isFavorite}));
     });
 
     render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
@@ -45,6 +45,12 @@ export default class EventController {
     if (this._mode !== Mode.DEFAULT) {
       this._replaceEditToEvent();
     }
+  }
+
+  destroy() {
+    remove(this._eventEditComponent);
+    remove(this._eventComponent);
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
   _replaceEventToEdit() {
