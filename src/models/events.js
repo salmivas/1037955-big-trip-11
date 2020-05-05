@@ -1,5 +1,6 @@
 import {FilterType} from "../const";
 import {getEventsByFilter} from "../utils/components/filters";
+import {createDaysData} from "../utils/components/trip-day";
 
 export default class Eevents {
   constructor() {
@@ -30,8 +31,8 @@ export default class Eevents {
     return this._days;
   }
 
-  setDays(days) {
-    this._days = Array.from(days);
+  setDays() {
+    this._days = createDaysData(this.getEvents());
   }
 
   getCities() {

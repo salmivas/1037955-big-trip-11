@@ -3,14 +3,13 @@ import SwitchTripViewComponent from "../src/Components/switch-tirp-view";
 import FilterController from "../src/controllers/filter";
 import TripController from "./controllers/trip";
 import {events as mockedEvents, cities} from "./mock/event";
-import {createDaysData} from "./utils/components/trip-day";
 import {createRouteAndCostData} from "./utils/components/route-and-cost";
 import {render, RenderPosition} from "./utils/render";
 import EventsModel from "./models/events";
 
 const eventsModel = new EventsModel();
 eventsModel.setEvents(mockedEvents);
-eventsModel.setDays(createDaysData(mockedEvents));
+eventsModel.setDays();
 eventsModel.setCities(cities);
 
 const routeAndCostList = createRouteAndCostData(mockedEvents);
