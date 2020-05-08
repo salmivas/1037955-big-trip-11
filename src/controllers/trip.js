@@ -1,4 +1,3 @@
-import SortComponent from "../Components/sort";
 import TripDaysComponent from "../Components/trip-days";
 import NoEventsComponent from "../Components/no-events";
 import {render, RenderPosition} from "../utils/render";
@@ -6,6 +5,14 @@ import {SortType} from "../utils/components/sort";
 import {calculateDuration} from "../utils/components/trip-event";
 import EventController from "./event";
 import TripDayController from "./day";
+import SortController from "./sort";
+
+const renderSort = (container, onSortTypeChange) => {
+  const sortController = new SortController(container, onSortTypeChange);
+  sortController.render();
+
+  return sortController;
+};
 
 const getSortedEvents = (events, sortType) => {
   const sortByTime = (a, b) => calculateDuration(b.dateFrom, b.dateTo) - calculateDuration(a.dateFrom, a.dateTo);
@@ -76,7 +83,7 @@ export default class TripController {
 
     this._eventControllers = [];
     this._tripDayControllers = [];
-    this._sortComponent = new SortComponent();
+    this._sortController = null;
     this._noEventsComponent = new NoEventsComponent();
     this._tripDaysComponent = new TripDaysComponent();
 
@@ -85,16 +92,16 @@ export default class TripController {
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
 
-    this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
     this._eventsModel.setFilterChangeHandler(this._onFilterChange);
   }
 
   render() {
     const events = this._eventsModel.getEvents();
 
+
     if (events.length > 0) {
-      render(this._container, this._sortComponent, RenderPosition.AFTEREND);
-      render(this._sortComponent.getElement(), this._tripDaysComponent, RenderPosition.AFTEREND);
+      render(this._container, this._tripDaysComponent, RenderPosition.AFTEREND);
+      this._sortController = renderSort(this._container, this._onSortTypeChange);
     } else {
       render(this._container, this._noEventsComponent, RenderPosition.AFTEREND);
     }
@@ -171,5 +178,6 @@ export default class TripController {
   _onFilterChange() {
     this._eventsModel.setDays();
     this._updateEvents();
+    this._sortController.setSortToDefault();
   }
 }
