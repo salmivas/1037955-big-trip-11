@@ -7,11 +7,12 @@ import {capitalize} from "../utils/common";
 import AbstractSmartComponent from "./abstract-smart-component";
 import {offers as availableOffers, destinations} from "../mock/event";
 
-const createEventEditOfferMarkup = (offersType, offer, id) => {
+const createEventEditOfferMarkup = (offer, id) => {
+  const offerId = `event-offer-${offer.title.split(` `).join(`-`).toLowerCase()}`;
   return (
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offersType}-${id}" name="event-offer-${offersType}" type="checkbox" ${offer.isChecked ? `checked` : ``}>
-      <label class="event__offer-label" for="event-offer-${offersType}-${id}">
+      <input class="event__offer-checkbox  visually-hidden" id="${offerId}-${id}" name="${offerId}" type="checkbox" ${offer.isChecked ? `checked` : ``}>
+      <label class="event__offer-label" for="${offerId}-${id}">
         <span class="event__offer-title">${offer.title}</span>
         &plus;
         &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
@@ -37,7 +38,7 @@ const createDestinationListMarkup = (city) => {
 };
 
 const createOffersMarkup = (offers, id) => {
-  const offersList = offers.offers.map((offer) => createEventEditOfferMarkup(offers.type, offer, id)).join(`\n`);
+  const offersList = offers.offers.map((offer) => createEventEditOfferMarkup(offer, id)).join(`\n`);
   return (
     offers.offers.length > 0 ?
       `<section class="event__section  event__section--offers">
@@ -166,6 +167,32 @@ const createEventEditMarkup = (event, cities) => {
   );
 };
 
+const parseOffers = (form, event) => {
+  const formOffers = form.querySelectorAll(`.event__offer-checkbox`);
+  const isChecked = [];
+
+  formOffers.forEach((offer) => offer.checked && isChecked.push(offer.name.split(`event-offer-`).slice(1).toString()));
+
+  const newOffers = event.offers.offers.map((offer) => {
+    const offerTitle = offer.title.split(` `).join(`-`).toLowerCase();
+    return isChecked.includes(offerTitle) ? Object.assign({}, offer, {isChecked: true}) : Object.assign({}, offer, {isChecked: false});
+  });
+
+  return {
+    type: event.type,
+    offers: newOffers
+  };
+};
+
+const parseFormData = (formData) => {
+  return {
+    type: formData.get(`event-type`),
+    dateFrom: new Date(formData.get(`event-start-time`)),
+    dateTo: new Date(formData.get(`event-end-time`)),
+    basePrice: +formData.get(`event-price`),
+  };
+};
+
 export default class EventEdit extends AbstractSmartComponent {
   constructor(event, cities) {
     super();
@@ -173,7 +200,8 @@ export default class EventEdit extends AbstractSmartComponent {
     this._event = event;
     this._cities = cities;
     this._submitHandler = null;
-    this._favoriteBottonClickHandler = null;
+    this._favoriteButtonClickHandler = null;
+    this._deleteButtonClickHandler = null;
 
     this._subscribeOnEvents();
   }
@@ -184,12 +212,22 @@ export default class EventEdit extends AbstractSmartComponent {
 
   recoveryListeners() {
     this.setSubmitHandler(this._submitHandler);
-    this.setFavoriteButtonClickHandler(this._favoriteBottonClickHandler);
+    this.setFavoriteButtonClickHandler(this._favoriteButtonClickHandler);
+    this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
     this._subscribeOnEvents();
   }
 
   rerender() {
     super.rerender();
+  }
+
+  getData() {
+    const form = this.getElement().querySelector(`.event`);
+    const formData = new FormData(form);
+    const offers = parseOffers(form, this._event);
+    const parsedData = parseFormData(formData, this._event);
+
+    return Object.assign({}, parsedData, {offers});
   }
 
   setSubmitHandler(handler) {
@@ -201,7 +239,17 @@ export default class EventEdit extends AbstractSmartComponent {
   setFavoriteButtonClickHandler(handler) {
     this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, handler);
 
-    this._favoriteBottonClickHandler = handler;
+    this._favoriteButtonClickHandler = handler;
+  }
+
+  setDeleteButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, handler);
+    this._deleteButtonClickHandler = handler;
+  }
+
+  removeEvent() {
+    // TODO. Add the flatpickr methods https://github.com/htmlacademy-ecmascript/taskmanager-11/commit/281d5cfd6ebb474794367df6a43ffa01b27f2b3c#diff-fbe272e9f8209479e2500d3491c416d4R180-R183
+    super.removeElement();
   }
 
   _subscribeOnEvents() {
