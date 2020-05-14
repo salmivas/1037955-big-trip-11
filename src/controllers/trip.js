@@ -3,7 +3,7 @@ import NoEventsComponent from "../Components/no-events";
 import {render, RenderPosition} from "../utils/render";
 import {SortType} from "../utils/components/sort";
 import {calculateDuration} from "../utils/components/trip-event";
-import EventController from "./event";
+import EventController, {Mode as EventControllerMode, EmptyEvent} from "./event";
 import TripDayController from "./day";
 import SortController from "./sort";
 
@@ -45,7 +45,7 @@ const renderTripDays = (container, days) => {
 const renderEvents = (events, cities, tripDayControllers, onDataChange, onViewChange) => {
   return events.map((event) => {
     const eventController = new EventController(tripDayControllers[0].getTripEventsList(), onDataChange, onViewChange);
-    eventController.render(event, cities);
+    eventController.render(event, cities, EventControllerMode.DEFAULT);
 
     return eventController;
   });
@@ -64,7 +64,7 @@ const renderEventsPerDay = (events, cities, dayControllers, onDataChange, onView
 
     currentDayEvents.forEach((event) => {
       const eventController = new EventController(controller.getTripEventsList(), onDataChange, onViewChange);
-      eventController.render(event, cities);
+      eventController.render(event, cities, EventControllerMode.DEFAULT);
       eventControllers.push(eventController);
     });
   });
@@ -83,6 +83,7 @@ export default class TripController {
 
     this._eventControllers = [];
     this._tripDayControllers = [];
+    this._creatingEventController = null;
     this._sortController = null;
     this._noEventsComponent = new NoEventsComponent();
     this._tripDaysComponent = new TripDaysComponent();
@@ -107,6 +108,17 @@ export default class TripController {
     }
 
     this._renderEventsPerDay(events);
+  }
+
+  createEvent() {
+    if (this._creatingEventController) {
+      return;
+    }
+    const cities = this._eventsModel.getCities();
+
+    const eventsListElement = this._tripDaysComponent.getElement();
+    this._creatingEventController = new EventController(eventsListElement, this._onDataChange, this._onViewChange);
+    this._creatingEventController.render(EmptyEvent, cities, EventControllerMode.ADDING);
   }
 
   _removeEvents() {
@@ -162,12 +174,29 @@ export default class TripController {
     this._rerenderEvents(events);
   }
 
-  _onDataChange(eventController, oldData, newData) {
-    const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
+  _onDataChange(eventController, oldData, updatedData) {
+    const cities = this._eventsModel.getCities();
 
-    if (isSuccess && eventController !== null) {
-      eventController.render(newData);
-      return;
+    if (oldData === EmptyEvent) {
+      this._creatingEventController = null;
+      if (updatedData === null) {
+        eventController.destroy();
+        this._updateEvents();
+      } else {
+        const newData = Object.assign({}, oldData, updatedData);
+        this._eventsModel.addEvent(newData);
+        eventController.render(newData, cities, EventControllerMode.DEFAULT);
+      }
+    } else if (updatedData === null) {
+      this._eventsModel.removeEvent(oldData.id);
+      this._updateEvents();
+    } else {
+      const newData = Object.assign({}, oldData, updatedData);
+      const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
+
+      if (isSuccess && eventController !== null) {
+        eventController.render(newData, cities, EventControllerMode.DEFAULT);
+      }
     }
   }
 

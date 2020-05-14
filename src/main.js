@@ -18,6 +18,7 @@ const tripMain = document.querySelector(`.trip-main`);
 const tripViewSwitcher = document.querySelector(`.trip-controls h2:first-child`);
 const tripFilters = document.querySelector(`.trip-controls h2:last-child`);
 const tripEventsHeader = document.querySelector(`.trip-events h2`);
+const newEventButton = document.querySelector(`.trip-main__event-add-btn`);
 
 render(tripMain, new RouteAndCostComponent(routeAndCostList), RenderPosition.AFTERBEGIN);
 render(tripViewSwitcher, new SwitchTripViewComponent(), RenderPosition.AFTEREND);
@@ -26,3 +27,12 @@ filterController.render();
 
 const tripController = new TripController(tripEventsHeader, eventsModel);
 tripController.render();
+
+newEventButton.addEventListener(`click`, (evt) => {
+  evt.target.disabled = !evt.target.disabled;
+
+  tripController.createEvent();
+  setTimeout(() => {
+    evt.target.disabled = false;
+  }, 1000);
+});

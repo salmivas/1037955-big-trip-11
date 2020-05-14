@@ -1,5 +1,9 @@
 import AbstractComponent from "./abstract-component";
 
+// const MenuItem = {
+
+// };
+
 const createSwitchTripViewMarkup = () => {
   return (
     `<nav class="trip-controls__trip-tabs  trip-tabs">
