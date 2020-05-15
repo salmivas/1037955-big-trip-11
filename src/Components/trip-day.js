@@ -1,10 +1,10 @@
 import AbstractComponent from "./abstract-component";
+import {createDateFormat, createMonthDayFormat} from "../utils/common";
 
 const createDayInfoMarkup = (day) => {
-  const {dateTime, dayDate, dayNumber} = day;
   return (
-    `<span class="day__counter">${dayNumber}</span>
-     <time class="day__date" datetime="${dateTime}">${dayDate}</time>`
+    `<span class="day__counter">${day.dayNumber}</span>
+     <time class="day__date" datetime="${createDateFormat(day.date)}">${createMonthDayFormat(day.date)}</time>`
   );
 };
 

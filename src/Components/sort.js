@@ -6,10 +6,10 @@ const createSortMarkup = (sort) => {
   const {name, checked} = sort;
 
   return (
-    `<div class="trip-sort__item  trip-sort__item--event">
-      <input id="sort-event" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-event"
+    `<div class="trip-sort__item  trip-sort__item--${name}">
+      <input id="sort-${name}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${name}"
         ${checked ? `checked` : ``}>
-      <label class="trip-sort__btn" for="sort-event" data-sort-type="${name}">
+      <label class="trip-sort__btn" for="sort-${name}" data-sort-type="${name}">
       ${capitalize(name)}
       ${name !== SortType.DEFAULT ?
       `<svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">

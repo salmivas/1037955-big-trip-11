@@ -2,7 +2,6 @@ import TripDaysComponent from "../Components/trip-days";
 import NoEventsComponent from "../Components/no-events";
 import {render, RenderPosition} from "../utils/render";
 import {SortType} from "../utils/components/sort";
-import {calculateDuration} from "../utils/components/trip-event";
 import EventController, {Mode as EventControllerMode, EmptyEvent} from "./event";
 import TripDayController from "./day";
 import SortController from "./sort";
@@ -13,6 +12,8 @@ const renderSort = (container, onSortTypeChange) => {
 
   return sortController;
 };
+
+const calculateDuration = (timeStart, timeEnd) => timeEnd.getTime() - timeStart.getTime();
 
 const getSortedEvents = (events, sortType) => {
   const sortByTime = (a, b) => calculateDuration(b.dateFrom, b.dateTo) - calculateDuration(a.dateFrom, a.dateTo);

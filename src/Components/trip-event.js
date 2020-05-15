@@ -2,7 +2,6 @@ import {
   createEventTitle,
   createDateTimeFormat,
   createTimeFormat,
-  calculateDuration,
   createTimeDurationFormat
 } from "../utils/components/trip-event";
 import AbstractComponent from "./abstract-component";
@@ -35,7 +34,7 @@ const createTripEventMarkup = (event) => {
             —
             <time class="event__end-time" datetime="${createDateTimeFormat(dateTo)}">${createTimeFormat(dateTo)}</time>
           </p>
-          <p class="event__duration">${createTimeDurationFormat(calculateDuration(dateTo, dateFrom))}</p>
+          <p class="event__duration">${createTimeDurationFormat(dateFrom, dateTo)}</p>
         </div>
 
         <p class="event__price">

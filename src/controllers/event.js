@@ -57,6 +57,7 @@ export default class EventController {
       const data = this._eventEditComponent.getData();
       this._onDataChange(this, event, data);
       this._replaceEditToEvent();
+      // this._eventEditComponent.removeFlatpickr();
     });
 
     this._eventEditComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, event, null));

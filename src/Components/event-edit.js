@@ -6,6 +6,10 @@ import {ACTIVITIES_BY_TYPE} from "../const";
 import {capitalize} from "../utils/common";
 import AbstractSmartComponent from "./abstract-smart-component";
 import {offers as availableOffers, destinations} from "../mock/event";
+import flatpickr from "flatpickr";
+import moment from "moment";
+
+import "flatpickr/dist/flatpickr.min.css";
 
 const createEventEditOfferMarkup = (offer, id) => {
   const offerId = `event-offer-${offer.title.split(` `).join(`-`).toLowerCase()}`;
@@ -199,8 +203,8 @@ const parseOffers = (form, offersType) => {
 const parseFormData = (formData) => {
   return {
     type: formData.get(`event-type`),
-    dateFrom: new Date(formData.get(`event-start-time`)),
-    dateTo: new Date(formData.get(`event-end-time`)),
+    dateFrom: moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`).toDate(),
+    dateTo: moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).toDate(),
     basePrice: +formData.get(`event-price`),
   };
 };
@@ -212,10 +216,12 @@ export default class EventEdit extends AbstractSmartComponent {
     this._event = event;
     this._cities = cities;
     this._isInAddingMode = isInAddingMode;
+    this._flatpickr = null;
     this._submitHandler = null;
     this._favoriteButtonClickHandler = null;
     this._deleteButtonClickHandler = null;
 
+    this._applyFlatpickr();
     this._subscribeOnEvents();
   }
 
@@ -232,6 +238,8 @@ export default class EventEdit extends AbstractSmartComponent {
 
   rerender() {
     super.rerender();
+
+    this._applyFlatpickr();
   }
 
   getData() {
@@ -267,9 +275,36 @@ export default class EventEdit extends AbstractSmartComponent {
     this._deleteButtonClickHandler = handler;
   }
 
-  removeEvent() {
-    // TODO. Add the flatpickr methods https://github.com/htmlacademy-ecmascript/taskmanager-11/commit/281d5cfd6ebb474794367df6a43ffa01b27f2b3c#diff-fbe272e9f8209479e2500d3491c416d4R180-R183
+  removeElement() {
+    // TODO: flatpickr multiplies
+    this._removeFlatpickr();
     super.removeElement();
+  }
+
+  _applyFlatpickr() {
+    this._removeFlatpickr();
+
+    this._flatpickr = {
+      startTime: this._setFlatpickr(this.getElement().querySelector(`[name = "event-start-time"]`)),
+      endTime: this._setFlatpickr(this.getElement().querySelector(`[name = "event-end-time"]`))
+    };
+  }
+
+  _setFlatpickr(element) {
+    return flatpickr(element, {
+      enableTime: true,
+      // eslint-disable-next-line camelcase
+      time_24hr: true,
+      allowInput: true,
+      dateFormat: `d/m/y H:i`,
+    });
+  }
+
+  _removeFlatpickr() {
+    if (this._flatpickr) {
+      Object.values(this._flatpickr).forEach((value) => value.destroy());
+      this._flatpickr = null;
+    }
   }
 
   _subscribeOnEvents() {
