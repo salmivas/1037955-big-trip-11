@@ -1,10 +1,29 @@
 import TripEventComponent from "../Components/trip-event";
 import EventEditComponent from "../Components/event-edit";
-import {render, RenderPosition, replace} from "../utils/render";
+import {render, RenderPosition, replace, remove} from "../utils/render";
 
 const Mode = {
   DEFAULT: `default`,
   EDIT: `edit`,
+  ADDING: `adding`,
+};
+
+const EmptyEvent = {
+  basePrice: 0,
+  dateFrom: new Date(),
+  dateTo: new Date(),
+  destination: {
+    name: ``,
+    description: ``,
+    pictures: []
+  },
+  id: 0,
+  isFavorite: false,
+  offers: {
+    type: ``,
+    offers: []
+  },
+  type: `taxi`
 };
 
 export default class EventController {
@@ -19,9 +38,14 @@ export default class EventController {
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
-  render(event, cities) {
+  render(event, cities, mode) {
+    this._mode = mode;
+    const oldEventComponent = this._eventComponent;
+    const oldEventEditComponent = this._eventEditComponent;
+    const isInAddingMode = this._mode === Mode.ADDING;
+
     this._eventComponent = new TripEventComponent(event);
-    this._eventEditComponent = new EventEditComponent(event, cities);
+    this._eventEditComponent = new EventEditComponent(event, cities, isInAddingMode);
 
     this._eventComponent.setRollupButtonClickHandler(() => {
       this._replaceEventToEdit();
@@ -30,21 +54,48 @@ export default class EventController {
 
     this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
+      const data = this._eventEditComponent.getData();
+      this._onDataChange(this, event, data);
       this._replaceEditToEvent();
-      document.removeEventListener(`keydown`, this._onEscKeyDown);
     });
+
+    this._eventEditComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, event, null));
 
     this._eventEditComponent.setFavoriteButtonClickHandler(() => {
-      this._onDataChange(event, Object.assign(event, {isFavorite: !event.isFavorite}));
+      const data = {isFavorite: !event.isFavorite};
+      this._onDataChange(this, event, data);
     });
 
-    render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
+    switch (mode) {
+      case Mode.DEFAULT:
+        if (oldEventEditComponent && oldEventComponent) {
+          replace(this._eventComponent, oldEventComponent);
+          replace(this._eventEditComponent, oldEventEditComponent);
+        } else {
+          render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
+        }
+        break;
+      case Mode.ADDING:
+        if (oldEventEditComponent && oldEventComponent) {
+          remove(this._eventComponent, oldEventComponent);
+          remove(this._eventEditComponent, oldEventEditComponent);
+        }
+        document.addEventListener(`keydown`, this._onEscKeyDown);
+        render(this._container, this._eventEditComponent, RenderPosition.BEFOREBEGIN);
+        break;
+    }
   }
 
   setDefaultView() {
     if (this._mode !== Mode.DEFAULT) {
       this._replaceEditToEvent();
     }
+  }
+
+  destroy() {
+    remove(this._eventEditComponent);
+    remove(this._eventComponent);
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
   _replaceEventToEdit() {
@@ -54,7 +105,13 @@ export default class EventController {
   }
 
   _replaceEditToEvent() {
-    replace(this._eventComponent, this._eventEditComponent);
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
+    this._eventEditComponent.reset();
+
+    if (document.contains(this._eventEditComponent.getElement())) {
+      replace(this._eventComponent, this._eventEditComponent);
+    }
+
     this._mode = Mode.DEFAULT;
   }
 
@@ -62,8 +119,13 @@ export default class EventController {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
     if (isEscKey) {
+      if (this._mode === Mode.ADDING) {
+        this._onDataChange(this, EmptyEvent, null);
+      }
       this._replaceEditToEvent();
       document.removeEventListener(`keydown`, this._onEscKeyDown);
     }
   }
 }
+
+export {Mode, EmptyEvent};

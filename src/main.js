@@ -1,23 +1,36 @@
 import RouteAndCostComponent from "../src/Components/route-and-cost";
 import SwitchTripViewComponent from "../src/Components/switch-tirp-view";
-import FiltersComponent from "../src/Components/filters";
+import FilterController from "../src/controllers/filter";
 import TripController from "./controllers/trip";
-import {events, cities} from "./mock/event";
-import {createDaysData} from "./utils/components/trip-day";
+import {events as mockedEvents, cities} from "./mock/event";
 import {createRouteAndCostData} from "./utils/components/route-and-cost";
 import {render, RenderPosition} from "./utils/render";
+import EventsModel from "./models/events";
 
-const days = createDaysData(events);
-const routeAndCostList = createRouteAndCostData(events);
+const eventsModel = new EventsModel();
+eventsModel.setEvents(mockedEvents);
+eventsModel.setDays();
+eventsModel.setCities(cities);
+
+const routeAndCostList = createRouteAndCostData(mockedEvents);
 
 const tripMain = document.querySelector(`.trip-main`);
 const tripViewSwitcher = document.querySelector(`.trip-controls h2:first-child`);
 const tripFilters = document.querySelector(`.trip-controls h2:last-child`);
 const tripEventsHeader = document.querySelector(`.trip-events h2`);
+const newEventButton = document.querySelector(`.trip-main__event-add-btn`);
 
 render(tripMain, new RouteAndCostComponent(routeAndCostList), RenderPosition.AFTERBEGIN);
 render(tripViewSwitcher, new SwitchTripViewComponent(), RenderPosition.AFTEREND);
-render(tripFilters, new FiltersComponent(), RenderPosition.AFTEREND);
+const filterController = new FilterController(tripFilters, eventsModel);
+filterController.render();
 
-const tripComponent = new TripController(tripEventsHeader);
-tripComponent.render(days, events, cities);
+const tripController = new TripController(tripEventsHeader, eventsModel);
+tripController.render();
+
+newEventButton.addEventListener(`click`, (evt) => {
+  evt.target.disabled = !evt.target.disabled;
+
+  tripController.createEvent(evt.target);
+  filterController.setFilterToDefault();
+});
