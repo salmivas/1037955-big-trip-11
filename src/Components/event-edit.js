@@ -324,6 +324,7 @@ export default class EventEdit extends AbstractSmartComponent {
     const element = this.getElement();
     const eventsTypeInputList = element.querySelectorAll(`.event__type-input`);
     const eventInputDestination = element.querySelector(`.event__input--destination`);
+    const eventInputPrice = element.querySelector(`.event__input--price`);
 
     for (const eventTypeInput of eventsTypeInputList) {
       eventTypeInput.addEventListener(`change`, (evt) => {
@@ -342,5 +343,13 @@ export default class EventEdit extends AbstractSmartComponent {
         this.rerender();
       }
     }, false);
+
+    eventInputPrice.addEventListener(`keypress`, (evt) => {
+      const char = String.fromCharCode(evt.which);
+
+      if (!(/[0-9]/.test(char))) {
+        evt.preventDefault();
+      }
+    });
   }
 }
