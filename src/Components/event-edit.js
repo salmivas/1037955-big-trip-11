@@ -215,6 +215,11 @@ export default class EventEdit extends AbstractSmartComponent {
 
     this._event = event;
     this._cities = cities;
+    this._currentDestination = event.destination;
+    this._currentIsFavorite = event.isFavorite;
+    this._currnetOffers = event.offers;
+    this._currentType = event.type;
+
     this._isInAddingMode = isInAddingMode;
     this._flatpickr = null;
     this._submitHandler = null;
@@ -240,6 +245,15 @@ export default class EventEdit extends AbstractSmartComponent {
     super.rerender();
 
     this._applyFlatpickr();
+  }
+
+  reset() {
+    this._event.destination = this._currentDestination;
+    this._event.isFavorite = this._currentIsFavorite;
+    this._event.offers = this._currnetOffers;
+    this._event.type = this._currentType;
+
+    this.rerender();
   }
 
   getData() {
@@ -276,7 +290,6 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
   removeElement() {
-    // TODO: flatpickr multiplies
     this._removeFlatpickr();
     super.removeElement();
   }

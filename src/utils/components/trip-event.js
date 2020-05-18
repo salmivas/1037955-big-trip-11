@@ -13,8 +13,8 @@ const createTimeFormat = (date) => moment(date).format(`HH:mm`);
 
 const createTimeInputFormat = (date) => moment(date).format(`DD/MM/YY HH:mm`);
 
-const createTimeDurationFormat = (timeStart, timeEnd) => {
-  const duration = moment.duration(moment(timeEnd).diff(moment(timeStart)));
+const createTimeDurationFormat = (dateStart, dateEnd) => {
+  const duration = moment.duration(moment(dateEnd).diff(moment(dateStart)));
 
   return `${duration.days() > 0 ? `${castTimeFormat(duration.days())}D` : ``}${duration.hours() > 0 ? ` ${castTimeFormat(duration.hours())}H` : ``}${duration.minutes() > 0 ? ` ${castTimeFormat(duration.minutes())}M` : ``}`;
 };

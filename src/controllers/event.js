@@ -39,12 +39,13 @@ export default class EventController {
   }
 
   render(event, cities, mode) {
+    this._mode = mode;
     const oldEventComponent = this._eventComponent;
     const oldEventEditComponent = this._eventEditComponent;
-    this._mode = mode;
+    const isInAddingMode = this._mode === Mode.ADDING;
 
     this._eventComponent = new TripEventComponent(event);
-    this._eventEditComponent = new EventEditComponent(event, cities, this._mode === Mode.ADDING);
+    this._eventEditComponent = new EventEditComponent(event, cities, isInAddingMode);
 
     this._eventComponent.setRollupButtonClickHandler(() => {
       this._replaceEventToEdit();
@@ -53,11 +54,9 @@ export default class EventController {
 
     this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
-
       const data = this._eventEditComponent.getData();
       this._onDataChange(this, event, data);
       this._replaceEditToEvent();
-      // this._eventEditComponent.removeFlatpickr();
     });
 
     this._eventEditComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, event, null));
@@ -106,7 +105,8 @@ export default class EventController {
   }
 
   _replaceEditToEvent() {
-    replace(this._eventComponent, this._eventEditComponent);
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
+    this._eventEditComponent.reset();
 
     if (document.contains(this._eventEditComponent.getElement())) {
       replace(this._eventComponent, this._eventEditComponent);

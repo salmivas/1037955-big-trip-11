@@ -2,13 +2,13 @@ import {FilterType} from "../../const";
 
 const getEventsAccordingCurrentTime = (events, date, filterType) => {
   return events.filter((event) => {
-    const searchedDate = filterType === `future` ? event.dateFrom : event.dateTo;
+    const searchedDate = filterType === FilterType.FUTURE ? event.dateFrom : event.dateTo;
 
     if (!searchedDate) {
       return false;
     }
 
-    return filterType === `future` ? searchedDate.getTime() > date.getTime() : searchedDate.getTime() < date.getTime();
+    return filterType === FilterType.FUTURE ? searchedDate.getTime() > date.getTime() : searchedDate.getTime() < date.getTime();
   });
 };
 

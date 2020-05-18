@@ -34,7 +34,6 @@ const getOffer = (title) => {
   return {
     "title": title,
     "price": getRandomIntegerNumber(10, 300),
-    "isChecked": Math.random() > 0.5,
   };
 };
 
@@ -97,7 +96,7 @@ const generateEvent = (time = getRandomDate()) => {
     destination: destinations[getRandomArrayItem(cities)],
     id: getRandomIntegerNumber(0, Number.MAX_SAFE_INTEGER),
     isFavorite: Math.random() > 0.8 ? true : false,
-    offers: offers[typeOfEvent],
+    offers: Object.assign({}, offers[typeOfEvent], {offers: offers[typeOfEvent].offers.map((offer) => Object.assign({}, offer, {isChecked: Math.random() > 0.5}))}),
     type: typeOfEvent,
   };
 };

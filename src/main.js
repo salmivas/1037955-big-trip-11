@@ -31,8 +31,6 @@ tripController.render();
 newEventButton.addEventListener(`click`, (evt) => {
   evt.target.disabled = !evt.target.disabled;
 
-  tripController.createEvent();
-  setTimeout(() => {
-    evt.target.disabled = false;
-  }, 1000);
+  tripController.createEvent(evt.target);
+  filterController.setFilterToDefault();
 });

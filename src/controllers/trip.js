@@ -18,11 +18,12 @@ const calculateDuration = (timeStart, timeEnd) => timeEnd.getTime() - timeStart.
 const getSortedEvents = (events, sortType) => {
   const sortByTime = (a, b) => calculateDuration(b.dateFrom, b.dateTo) - calculateDuration(a.dateFrom, a.dateTo);
   const sortByPrice = (a, b) => b.basePrice - a.basePrice;
+  const sortByDefault = (a, b) => a.dateFrom.getTime() - b.dateFrom.getTime();
 
   const eventsBySortType = {
     [SortType.TIME_DOWN]: [...events].sort(sortByTime),
     [SortType.PRICE_DOWN]: [...events].sort(sortByPrice),
-    [SortType.DEFAULT]: events,
+    [SortType.DEFAULT]: [...events].sort(sortByDefault),
   };
 
   return eventsBySortType[sortType];
@@ -86,8 +87,10 @@ export default class TripController {
     this._tripDayControllers = [];
     this._creatingEventController = null;
     this._sortController = null;
+
     this._noEventsComponent = new NoEventsComponent();
     this._tripDaysComponent = new TripDaysComponent();
+    this._newEventButton = null;
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
@@ -100,7 +103,6 @@ export default class TripController {
   render() {
     const events = this._eventsModel.getEvents();
 
-
     if (events.length > 0) {
       render(this._container, this._tripDaysComponent, RenderPosition.AFTEREND);
       this._sortController = renderSort(this._container, this._onSortTypeChange);
@@ -111,10 +113,11 @@ export default class TripController {
     this._renderEventsPerDay(events);
   }
 
-  createEvent() {
-    if (this._creatingEventController) {
-      return;
-    }
+  createEvent(newEventButton) {
+    this._onViewChange();
+    this._sortController.setSortToDefault();
+    this._newEventButton = newEventButton;
+
     const cities = this._eventsModel.getCities();
 
     const eventsListElement = this._tripDaysComponent.getElement();
@@ -148,51 +151,61 @@ export default class TripController {
     this._eventControllers = renderEvents(events, cities, this._tripDayControllers, this._onDataChange, this._onViewChange);
   }
 
-  _rerenderEvents(events, perDay = true) {
+  _rerenderEvents(events, sortType) {
     this._removeEvents();
-    if (!perDay) {
-      this._renderEvents(events);
-      return;
+
+    switch (sortType) {
+      case SortType.DEFAULT:
+        this._renderEventsPerDay(getSortedEvents(events, SortType.DEFAULT));
+        break;
+      case SortType.TIME_DOWN:
+        this._renderEvents(getSortedEvents(events, SortType.TIME_DOWN));
+        break;
+      case SortType.PRICE_DOWN:
+        this._renderEvents(getSortedEvents(events, SortType.PRICE_DOWN));
+        break;
     }
-    this._renderEventsPerDay(events);
   }
 
   _onSortTypeChange(sortType) {
     const events = this._eventsModel.getEvents();
-    const sortedEvents = getSortedEvents(events, sortType);
 
-    if (sortType === SortType.DEFAULT) {
-      this._rerenderEvents(sortedEvents);
-      return;
+    switch (sortType) {
+      case SortType.DEFAULT:
+        this._rerenderEvents(events, SortType.DEFAULT);
+        break;
+      case SortType.TIME_DOWN:
+        this._rerenderEvents(events, SortType.TIME_DOWN);
+        break;
+      case SortType.PRICE_DOWN:
+        this._rerenderEvents(events, SortType.PRICE_DOWN);
+        break;
     }
-
-    this._rerenderEvents(sortedEvents, false);
   }
 
   _updateEvents() {
     const events = this._eventsModel.getEvents();
+    const currentSortType = this._sortController.getActiveSortType();
 
-    this._rerenderEvents(events);
+    this._rerenderEvents(events, currentSortType);
   }
 
   _onDataChange(eventController, oldData, updatedData) {
     const cities = this._eventsModel.getCities();
-
-    if (oldData === EmptyEvent) {
-      this._creatingEventController = null;
-      if (updatedData === null) {
+    const newData = Object.assign({}, oldData, updatedData);
+    if (oldData === EmptyEvent) { // Adding
+      this._removeCreatingEvent();
+      if (updatedData === null) { // Deleting opened adding card
         eventController.destroy();
         this._updateEvents();
-      } else {
-        const newData = Object.assign({}, oldData, updatedData);
+      } else { // Adding new data from opened adding card
         this._eventsModel.addEvent(newData);
-        eventController.render(newData, cities, EventControllerMode.DEFAULT);
+        this._updateEvents();
       }
-    } else if (updatedData === null) {
+    } else if (updatedData === null) { // Deleting
       this._eventsModel.removeEvent(oldData.id);
       this._updateEvents();
-    } else {
-      const newData = Object.assign({}, oldData, updatedData);
+    } else { // Renewing
       const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
 
       if (isSuccess && eventController !== null) {
@@ -202,6 +215,10 @@ export default class TripController {
   }
 
   _onViewChange() {
+    if (this._creatingEventController) {
+      this._removeCreatingEvent();
+    }
+
     this._eventControllers.forEach((eventController) => eventController.setDefaultView());
   }
 
@@ -209,5 +226,11 @@ export default class TripController {
     this._eventsModel.setDays();
     this._updateEvents();
     this._sortController.setSortToDefault();
+  }
+
+  _removeCreatingEvent() {
+    this._creatingEventController.destroy();
+    this._creatingEventController = null;
+    this._newEventButton.disabled = false;
   }
 }
