@@ -1,6 +1,7 @@
 import {
   getRandomIntegerNumber,
   getRandomArrayItem,
+  generateId,
 } from "../utils/common";
 import {TYPES_OF_ACTIVITY} from "../const";
 
@@ -94,7 +95,7 @@ const generateEvent = (time = getRandomDate()) => {
     dateFrom: startTime,
     dateTo: endTime,
     destination: destinations[getRandomArrayItem(cities)],
-    id: getRandomIntegerNumber(0, Number.MAX_SAFE_INTEGER),
+    id: generateId(),
     isFavorite: Math.random() > 0.8 ? true : false,
     offers: Object.assign({}, offers[typeOfEvent], {offers: offers[typeOfEvent].offers.map((offer) => Object.assign({}, offer, {isChecked: Math.random() > 0.5}))}),
     type: typeOfEvent,
