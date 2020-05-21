@@ -5,6 +5,7 @@ import {SortType} from "../utils/components/sort";
 import EventController, {Mode as EventControllerMode, EmptyEvent} from "./event";
 import TripDayController from "./day";
 import SortController from "./sort";
+import {generateId} from "../utils/common";
 
 const renderSort = (container, onSortTypeChange) => {
   const sortController = new SortController(container, onSortTypeChange);
@@ -100,14 +101,22 @@ export default class TripController {
     this._eventsModel.setFilterChangeHandler(this._onFilterChange);
   }
 
+  hide() {
+    this._container.tripEvents.hide();
+  }
+
+  show() {
+    this._container.tripEvents.show();
+  }
+
   render() {
     const events = this._eventsModel.getEvents();
 
     if (events.length > 0) {
-      render(this._container, this._tripDaysComponent, RenderPosition.AFTEREND);
-      this._sortController = renderSort(this._container, this._onSortTypeChange);
+      render(this._container.tripEventsHeader, this._tripDaysComponent, RenderPosition.AFTEREND);
+      this._sortController = renderSort(this._container.tripEventsHeader, this._onSortTypeChange);
     } else {
-      render(this._container, this._noEventsComponent, RenderPosition.AFTEREND);
+      render(this._container.tripEventsHeader, this._noEventsComponent, RenderPosition.AFTEREND);
     }
 
     this._renderEventsPerDay(events);
@@ -122,6 +131,7 @@ export default class TripController {
 
     const eventsListElement = this._tripDaysComponent.getElement();
     this._creatingEventController = new EventController(eventsListElement, this._onDataChange, this._onViewChange);
+    EmptyEvent.id = generateId();
     this._creatingEventController.render(EmptyEvent, cities, EventControllerMode.ADDING);
   }
 

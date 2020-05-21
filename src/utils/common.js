@@ -4,6 +4,12 @@ const getRandomIntegerNumber = (min, max) => {
   return min + Math.floor(max * Math.random());
 };
 
+const generateId = () => {
+  return [...getRandomIntegerNumber(0, Number.MAX_SAFE_INTEGER).toString()].map((val) => {
+    return val.concat(Math.random().toString(36).substring(2, 5));
+  }).join(``);
+};
+
 const shuffleArray = (anyArray) => {
   for (let i = anyArray.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -32,4 +38,5 @@ export {
   shuffleArray,
   createDateFormat,
   createMonthDayFormat,
+  generateId,
 };
