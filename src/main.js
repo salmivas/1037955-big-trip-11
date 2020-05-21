@@ -54,7 +54,7 @@ const tripEventsContainer = {
 const tripController = new TripController(tripEventsContainer, eventsModel);
 tripController.render();
 
-const statisticsComponent = new StatisticsComponent();
+const statisticsComponent = new StatisticsComponent(eventsModel);
 render(mainPageBody, statisticsComponent, RenderPosition.BEFOREEND);
 statisticsComponent.hide();
 
