@@ -13,8 +13,6 @@ eventsModel.setEvents(mockedEvents);
 eventsModel.setDays();
 eventsModel.setCities(cities);
 
-const routeAndCostList = createRouteAndCostData(mockedEvents);
-
 const tripMain = document.querySelector(`.trip-main`);
 const tripViewSwitcher = document.querySelector(`.trip-controls h2:first-child`);
 const tripFilters = document.querySelector(`.trip-controls h2:last-child`);
@@ -22,14 +20,6 @@ const tripEvents = document.querySelector(`.trip-events`);
 const tripEventsHeader = document.querySelector(`.trip-events h2`);
 const newEventButton = document.querySelector(`.trip-main__event-add-btn`);
 const mainPageBody = document.querySelector(`main .page-body__container`);
-
-render(tripMain, new RouteAndCostComponent(routeAndCostList), RenderPosition.AFTERBEGIN);
-
-const switchTripViewComponent = new SwitchTripViewComponent();
-render(tripViewSwitcher, switchTripViewComponent, RenderPosition.AFTEREND);
-
-const filterController = new FilterController(tripFilters, eventsModel);
-filterController.render();
 
 const tripEventsContainer = {
   tripEvents: {
@@ -51,12 +41,17 @@ const tripEventsContainer = {
   tripEventsHeader
 };
 
-const tripController = new TripController(tripEventsContainer, eventsModel);
-tripController.render();
-
+const routeAndCostComponent = new RouteAndCostComponent(createRouteAndCostData(mockedEvents));
+render(tripMain, routeAndCostComponent, RenderPosition.AFTERBEGIN);
+const switchTripViewComponent = new SwitchTripViewComponent();
+render(tripViewSwitcher, switchTripViewComponent, RenderPosition.AFTEREND);
 const statisticsComponent = new StatisticsComponent(eventsModel);
 render(mainPageBody, statisticsComponent, RenderPosition.BEFOREEND);
-statisticsComponent.hide();
+
+const filterController = new FilterController(tripFilters, eventsModel);
+filterController.render();
+const tripController = new TripController(tripEventsContainer, eventsModel);
+tripController.render();
 
 newEventButton.addEventListener(`click`, (evt) => {
   evt.target.disabled = !evt.target.disabled;

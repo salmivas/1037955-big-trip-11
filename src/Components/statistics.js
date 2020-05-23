@@ -263,6 +263,7 @@ export default class Statistics extends AbstractSmartComponent {
     this._timeSpentChart = null;
 
     this._renderCharts();
+    this.hide();
   }
 
   getTemplate() {
