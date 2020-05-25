@@ -1,12 +1,13 @@
 export default class Event {
   constructor(data) {
+    this.basePrice = data[`base_price`];
+    this.dateFrom = new Date(data[`date_from`]);
+    this.dateTo = new Date(data[`date_to`]);
+    this.destination = data[`destination`];
     this.id = data[`id`];
-    this.description = data[`description`] || ``;
-    this.dueDate = data[`due_date`] ? new Date(data[`due_date`]) : null;
-    this.repeatingDays = data[`repeating_days`];
-    this.color = data[`color`];
-    this.isFavorite = Boolean(data[`is_favorite`]);
-    this.isArchive = Boolean(data[`is_archived`]);
+    this.isFavorite = data[`is_favorite`];
+    this.offers = data[`offers`];
+    this.type = data[`type`];
   }
 
   static parseEvent(data) {

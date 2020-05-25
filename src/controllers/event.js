@@ -38,14 +38,14 @@ export default class EventController {
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
-  render(event, cities, mode) {
+  render(event, destinationsModel, offersModel, mode) {
     this._mode = mode;
     const oldEventComponent = this._eventComponent;
     const oldEventEditComponent = this._eventEditComponent;
     const isInAddingMode = this._mode === Mode.ADDING;
 
     this._eventComponent = new TripEventComponent(event);
-    this._eventEditComponent = new EventEditComponent(event, cities, isInAddingMode);
+    this._eventEditComponent = new EventEditComponent(event, destinationsModel, offersModel, isInAddingMode);
 
     this._eventComponent.setRollupButtonClickHandler(() => {
       this._replaceEventToEdit();

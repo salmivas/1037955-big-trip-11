@@ -3,15 +3,22 @@ import SwitchTripViewComponent, {MenuItem} from "../src/Components/switch-tirp-v
 import StatisticsComponent from "../src/Components/statistics";
 import FilterController from "../src/controllers/filter";
 import TripController from "./controllers/trip";
-import {events as mockedEvents, cities} from "./mock/event";
+import {events as mockedEvents, destinations as mockedDestinations, offers} from "./mock/event";
 import {createRouteAndCostData} from "./utils/components/route-and-cost";
 import {render, RenderPosition} from "./utils/render";
 import EventsModel from "./models/events";
+import DestinationsModel from "./models/destinations";
+import OffersModel from "./models/offers";
 
 const eventsModel = new EventsModel();
 eventsModel.setEvents(mockedEvents);
 eventsModel.setDays();
-eventsModel.setCities(cities);
+
+const destinationsModel = new DestinationsModel();
+destinationsModel.setDestinations(mockedDestinations);
+
+const offersModel = new OffersModel();
+offersModel.setOffers(offers);
 
 const tripMain = document.querySelector(`.trip-main`);
 const tripViewSwitcher = document.querySelector(`.trip-controls h2:first-child`);
@@ -50,7 +57,7 @@ render(mainPageBody, statisticsComponent, RenderPosition.BEFOREEND);
 
 const filterController = new FilterController(tripFilters, eventsModel);
 filterController.render();
-const tripController = new TripController(tripEventsContainer, eventsModel);
+const tripController = new TripController(tripEventsContainer, eventsModel, destinationsModel, offersModel);
 tripController.render();
 
 newEventButton.addEventListener(`click`, (evt) => {

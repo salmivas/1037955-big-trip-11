@@ -5,7 +5,6 @@ import {
 import {ACTIVITIES_BY_TYPE} from "../const";
 import {capitalize} from "../utils/common";
 import AbstractSmartComponent from "./abstract-smart-component";
-import {offers as availableOffers, destinations} from "../mock/event";
 import flatpickr from "flatpickr";
 import moment from "moment";
 
@@ -183,13 +182,13 @@ const createTripEventItemMarkup = (event, cities, isInAddingMode) => {
   );
 };
 
-const parseOffers = (form, offersType) => {
+const parseOffers = (form, offersType, receivedOffers) => {
   const formOffers = form.querySelectorAll(`.event__offer-checkbox`);
   const isChecked = [];
 
   formOffers.forEach((offer) => offer.checked && isChecked.push(offer.name.split(`event-offer-`).slice(1).toString()));
 
-  const renewedOffers = availableOffers[offersType].offers.map((offer) => {
+  const renewedOffers = receivedOffers.offers.map((offer) => {
     const offerTitle = offer.title.split(` `).join(`-`).toLowerCase();
     return isChecked.includes(offerTitle) ? Object.assign({}, offer, {isChecked: true}) : Object.assign({}, offer, {isChecked: false});
   });
@@ -210,11 +209,12 @@ const parseFormData = (formData) => {
 };
 
 export default class EventEdit extends AbstractSmartComponent {
-  constructor(event, cities, isInAddingMode) {
+  constructor(event, destinationsModel, offersModel, isInAddingMode) {
     super();
 
     this._event = event;
-    this._cities = cities;
+    this._destinationsModel = destinationsModel;
+    this._offersModel = offersModel;
     this._currentDestination = event.destination;
     this._currentIsFavorite = event.isFavorite;
     this._currnetOffers = event.offers;
@@ -231,7 +231,8 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createTripEventItemMarkup(this._event, this._cities, this._isInAddingMode);
+    const cities = this._destinationsModel.getCities();
+    return createTripEventItemMarkup(this._event, cities, this._isInAddingMode);
   }
 
   recoveryListeners() {
@@ -260,7 +261,9 @@ export default class EventEdit extends AbstractSmartComponent {
     const form = this._isInAddingMode ? this.getElement() : this.getElement().querySelector(`.event`);
     const formData = new FormData(form);
     const parsedData = parseFormData(formData);
-    const offers = parseOffers(form, parsedData.type);
+    const offersType = parsedData.type;
+    const receivedOffers = this._offersModel.getOffersByType(offersType);
+    const offers = parseOffers(form, offersType, receivedOffers);
 
     return Object.assign({}, parsedData, {offers});
   }
@@ -329,7 +332,7 @@ export default class EventEdit extends AbstractSmartComponent {
     for (const eventTypeInput of eventsTypeInputList) {
       eventTypeInput.addEventListener(`change`, (evt) => {
         this._event.type = evt.target.value;
-        this._event.offers = availableOffers[evt.target.value];
+        this._event.offers = this._offersModel.getOffersByType(evt.target.value);
 
         this.rerender();
       });
@@ -338,7 +341,7 @@ export default class EventEdit extends AbstractSmartComponent {
     eventInputDestination.addEventListener(`input`, (evt) => {
       let isInputEvent = (Object.prototype.toString.call(evt).indexOf(`InputEvent`) > -1);
       if (!isInputEvent) {
-        this._event.destination = destinations[evt.target.value];
+        this._event.destination = this._destinationsModel.getDestinationByName(evt.target.value);
 
         this.rerender();
       }
