@@ -1,17 +1,30 @@
 import Event from "./models/event";
+import {URL} from "./const";
+
 
 const API = class {
   constructor(authorization) {
     this._authorization = authorization;
   }
 
-  getEvents() {
+  _getFetch(url) {
     const headers = new Headers();
     headers.append(`Authorization`, this._authorization);
 
-    return fetch(`https://11.ecmascript.pages.academy/big-trip/points`, {headers})
-      .then((response) => response.json())
-      .then(Event.parseEvents);
+    return fetch(url, {headers})
+      .then((response) => response.json());
+  }
+
+  getEvents() {
+    return this._getFetch(URL.EVENTS).then(Event.parseEvents);
+  }
+
+  getOffers() {
+    return this._getFetch(URL.OFFERS);
+  }
+
+  getDestinations() {
+    return this._getFetch(URL.DESTINATIONS);
   }
 };
 

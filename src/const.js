@@ -13,4 +13,10 @@ const FilterType = {
   PAST: `past`,
 };
 
-export {TYPES_OF_ACTIVITY, ACTIVITIES_BY_TYPE, NUMBER_OF_EVENTS_PER_DAY, FilterType};
+const URL = {
+  EVENTS: `https://11.ecmascript.pages.academy/big-trip/points`,
+  OFFERS: `https://11.ecmascript.pages.academy/big-trip/offers`,
+  DESTINATIONS: `https://11.ecmascript.pages.academy/big-trip/destinations`,
+};
+
+export {TYPES_OF_ACTIVITY, ACTIVITIES_BY_TYPE, NUMBER_OF_EVENTS_PER_DAY, FilterType, URL};

@@ -1,26 +1,22 @@
-import RouteAndCostComponent from "../src/Components/route-and-cost";
+// import RouteAndCostComponent from "../src/Components/route-and-cost";
 import SwitchTripViewComponent, {MenuItem} from "../src/Components/switch-tirp-view";
 import StatisticsComponent from "../src/Components/statistics";
 import FilterController from "../src/controllers/filter";
 import TripController from "./controllers/trip";
-import {events as mockedEvents, destinations as mockedDestinations, offers} from "./mock/event";
-import {createRouteAndCostData} from "./utils/components/route-and-cost";
+// import {createRouteAndCostData} from "./utils/components/route-and-cost";
 import {render, RenderPosition} from "./utils/render";
 import EventsModel from "./models/events";
 import DestinationsModel from "./models/destinations";
 import OffersModel from "./models/offers";
+import API from "./api";
 
+const AUTHORIZATION = `Basic kA8dKLa7asdPO20`;
+const api = new API(AUTHORIZATION);
 const eventsModel = new EventsModel();
-eventsModel.setEvents(mockedEvents);
-eventsModel.setDays();
-
 const destinationsModel = new DestinationsModel();
-destinationsModel.setDestinations(mockedDestinations);
-
 const offersModel = new OffersModel();
-offersModel.setOffers(offers);
 
-const tripMain = document.querySelector(`.trip-main`);
+// const tripMain = document.querySelector(`.trip-main`);
 const tripViewSwitcher = document.querySelector(`.trip-controls h2:first-child`);
 const tripFilters = document.querySelector(`.trip-controls h2:last-child`);
 const tripEvents = document.querySelector(`.trip-events`);
@@ -48,8 +44,8 @@ const tripEventsContainer = {
   tripEventsHeader
 };
 
-const routeAndCostComponent = new RouteAndCostComponent(createRouteAndCostData(mockedEvents));
-render(tripMain, routeAndCostComponent, RenderPosition.AFTERBEGIN);
+// const routeAndCostComponent = new RouteAndCostComponent(createRouteAndCostData(mockedEvents));
+// render(tripMain, routeAndCostComponent, RenderPosition.AFTERBEGIN);
 const switchTripViewComponent = new SwitchTripViewComponent();
 render(tripViewSwitcher, switchTripViewComponent, RenderPosition.AFTEREND);
 const statisticsComponent = new StatisticsComponent(eventsModel);
@@ -58,7 +54,6 @@ render(mainPageBody, statisticsComponent, RenderPosition.BEFOREEND);
 const filterController = new FilterController(tripFilters, eventsModel);
 filterController.render();
 const tripController = new TripController(tripEventsContainer, eventsModel, destinationsModel, offersModel);
-tripController.render();
 
 newEventButton.addEventListener(`click`, (evt) => {
   evt.target.disabled = !evt.target.disabled;
@@ -79,3 +74,32 @@ switchTripViewComponent.setOnChange((menuItem) => {
       break;
   }
 });
+
+api.getOffers()
+  .then((offers) => {
+    if (!(offers.length > 0)) {
+      throw new Error(`There's no offers to set!`);
+    }
+    offersModel.setOffers(offers);
+  })
+  .then(
+      api.getEvents()
+        .then((events) => {
+          return events.map((event) => {
+            event.offers = offersModel.getOffersByType(event.type);
+            return event;
+          });
+        })
+        .then((events) => {
+          eventsModel.setEvents(events);
+          eventsModel.setDays();
+          tripController.render();
+        })
+  )
+  .catch();
+
+
+api.getDestinations()
+  .then((destinations) => {
+    destinationsModel.setDestinations(destinations);
+  });

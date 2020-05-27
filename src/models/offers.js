@@ -8,8 +8,7 @@ export default class Offers {
   }
 
   setOffers(offers) {
-    // this._offers = Array.from(offers);
-    this._offers = Object.values(offers);
+    this._offers = Array.from(offers);
   }
 
   getOffersByType(type) {

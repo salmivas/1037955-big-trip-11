@@ -8,8 +8,7 @@ export default class Destinations {
   }
 
   setDestinations(destinations) {
-    // this._destinations = Array.from(destinations);
-    this._destinations = Object.values(destinations);
+    this._destinations = Array.from(destinations);
   }
 
   getDestinationByName(name) {
