@@ -19,4 +19,16 @@ const URL = {
   DESTINATIONS: `https://11.ecmascript.pages.academy/big-trip/destinations`,
 };
 
-export {TYPES_OF_ACTIVITY, ACTIVITIES_BY_TYPE, NUMBER_OF_EVENTS_PER_DAY, FilterType, URL};
+const NoEventsMessage = {
+  LOADING: `Loading...`,
+  NO_EVENTS: `Click New Event to create your first point`,
+};
+
+export {
+  TYPES_OF_ACTIVITY,
+  ACTIVITIES_BY_TYPE,
+  NUMBER_OF_EVENTS_PER_DAY,
+  FilterType,
+  URL,
+  NoEventsMessage
+};

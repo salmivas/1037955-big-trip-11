@@ -1,10 +1,12 @@
 // import RouteAndCostComponent from "../src/Components/route-and-cost";
 import SwitchTripViewComponent, {MenuItem} from "../src/Components/switch-tirp-view";
 import StatisticsComponent from "../src/Components/statistics";
+import NoEventsComponent from "../src/Components/no-events";
 import FilterController from "../src/controllers/filter";
 import TripController from "./controllers/trip";
 // import {createRouteAndCostData} from "./utils/components/route-and-cost";
 import {render, RenderPosition} from "./utils/render";
+import {NoEventsMessage} from "./const";
 import EventsModel from "./models/events";
 import DestinationsModel from "./models/destinations";
 import OffersModel from "./models/offers";
@@ -50,10 +52,14 @@ const switchTripViewComponent = new SwitchTripViewComponent();
 render(tripViewSwitcher, switchTripViewComponent, RenderPosition.AFTEREND);
 const statisticsComponent = new StatisticsComponent(eventsModel);
 render(mainPageBody, statisticsComponent, RenderPosition.BEFOREEND);
+const noEventsComponent = new NoEventsComponent(NoEventsMessage.LOADING);
+render(tripEventsContainer.tripEventsHeader, noEventsComponent, RenderPosition.AFTEREND);
+newEventButton.disabled = true;
 
 const filterController = new FilterController(tripFilters, eventsModel);
 filterController.render();
 const tripController = new TripController(tripEventsContainer, eventsModel, destinationsModel, offersModel);
+
 
 newEventButton.addEventListener(`click`, (evt) => {
   evt.target.disabled = !evt.target.disabled;
@@ -77,13 +83,10 @@ switchTripViewComponent.setOnChange((menuItem) => {
 
 api.getOffers()
   .then((offers) => {
-    if (!(offers.length > 0)) {
-      throw new Error(`There's no offers to set!`);
-    }
     offersModel.setOffers(offers);
   })
-  .then(
-      api.getEvents()
+  .then(() => {
+    api.getEvents()
         .then((events) => {
           return events.map((event) => {
             event.offers = offersModel.getOffersByType(event.type);
@@ -93,10 +96,12 @@ api.getOffers()
         .then((events) => {
           eventsModel.setEvents(events);
           eventsModel.setDays();
+          noEventsComponent.remove();
           tripController.render();
-        })
-  )
-  .catch();
+          newEventButton.disabled = false;
+        });
+  })
+.catch();
 
 
 api.getDestinations()

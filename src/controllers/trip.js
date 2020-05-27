@@ -1,5 +1,6 @@
 import TripDaysComponent from "../Components/trip-days";
 import NoEventsComponent from "../Components/no-events";
+import {NoEventsMessage} from "../const";
 import {render, RenderPosition} from "../utils/render";
 import {SortType} from "../utils/components/sort";
 import EventController, {Mode as EventControllerMode, EmptyEvent} from "./event";
@@ -86,7 +87,7 @@ export default class TripController {
     this._creatingEventController = null;
     this._sortController = null;
 
-    this._noEventsComponent = new NoEventsComponent();
+    this._noEventsComponent = null;
     this._tripDaysComponent = new TripDaysComponent();
     this._newEventButton = null;
 
@@ -113,6 +114,7 @@ export default class TripController {
       render(this._container.tripEventsHeader, this._tripDaysComponent, RenderPosition.AFTEREND);
       this._sortController = renderSort(this._container.tripEventsHeader, this._onSortTypeChange);
     } else {
+      this._noEventsComponent = new NoEventsComponent(NoEventsMessage.NO_EVENTS);
       render(this._container.tripEventsHeader, this._noEventsComponent, RenderPosition.AFTEREND);
     }
 
