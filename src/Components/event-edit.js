@@ -240,6 +240,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
   getTemplate() {
     const cities = this._destinationsModel.getCities();
+
     return createTripEventItemMarkup(this._eventModel, this._offersModel, cities, this._isInAddingMode);
   }
 
