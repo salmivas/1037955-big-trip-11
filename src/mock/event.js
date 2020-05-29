@@ -109,6 +109,6 @@ const generateEvents = (count) => {
   .sort((a, b) => a.dateFrom - b.dateFrom);
 };
 
-const events = generateEvents(0);
+const events = generateEvents(20);
 
 export {events, offers, destinations};

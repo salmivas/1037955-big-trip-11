@@ -6,13 +6,12 @@ import FilterController from "../src/controllers/filter";
 import TripController from "./controllers/trip";
 // import {createRouteAndCostData} from "./utils/components/route-and-cost";
 import {render, RenderPosition} from "./utils/render";
-import {NoEventsMessage} from "./const";
+import {NoEventsMessage, AUTHORIZATION} from "./const";
 import EventsModel from "./models/events";
 import DestinationsModel from "./models/destinations";
 import OffersModel from "./models/offers";
 import API from "./api";
 
-const AUTHORIZATION = `Basic kA8dKLa7asdPO20`;
 const api = new API(AUTHORIZATION);
 const eventsModel = new EventsModel();
 const destinationsModel = new DestinationsModel();
@@ -58,7 +57,7 @@ newEventButton.disabled = true;
 
 const filterController = new FilterController(tripFilters, eventsModel);
 filterController.render();
-const tripController = new TripController(tripEventsContainer, eventsModel, destinationsModel, offersModel);
+const tripController = new TripController(tripEventsContainer, eventsModel, destinationsModel, offersModel, api);
 
 
 newEventButton.addEventListener(`click`, (evt) => {
@@ -87,12 +86,6 @@ api.getOffers()
   })
   .then(() => {
     api.getEvents()
-        .then((events) => {
-          return events.map((event) => {
-            event.offers = offersModel.getOffersByType(event.type);
-            return event;
-          });
-        })
         .then((events) => {
           eventsModel.setEvents(events);
           eventsModel.setDays();

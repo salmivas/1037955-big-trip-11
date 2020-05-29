@@ -8,18 +8,18 @@ import AbstractComponent from "./abstract-component";
 
 const createTripEventOfferMarkup = (offer) => {
   return (
-    offer.isChecked ?
-      `<li class="event__offer">
-        <span class="event__offer-title">${offer.title}</span>
-        +
-        €&nbsp;<span class="event__offer-price">${offer.price}</span>
-      </li>` : ``
+    `<li class="event__offer">
+      <span class="event__offer-title">${offer.title}</span>
+      +
+      €&nbsp;<span class="event__offer-price">${offer.price}</span>
+    </li>`
   );
 };
 
-const createTripEventMarkup = (event) => {
-  const {type, basePrice, dateFrom, dateTo, destination, offers} = event;
-  const offersMarkup = offers.offers.filter((it) => it.isChecked).map((it) => createTripEventOfferMarkup(it)).slice(0, 3).join(`\n`);
+const createTripEventMarkup = (eventModel) => {
+  const {type, basePrice, dateFrom, dateTo, destination, offers} = eventModel;
+  const offersMarkup = offers.length ? offers.map((it) => createTripEventOfferMarkup(it)).slice(0, 3).join(`\n`) : ``;
+
   return (
     `<li class="trip-events__item">
       <div class="event">
@@ -55,14 +55,14 @@ const createTripEventMarkup = (event) => {
 };
 
 export default class TripEvent extends AbstractComponent {
-  constructor(event) {
+  constructor(eventModel) {
     super();
 
-    this._event = event;
+    this._eventModel = eventModel;
   }
 
   getTemplate() {
-    return createTripEventMarkup(this._event);
+    return createTripEventMarkup(this._eventModel);
   }
 
   setRollupButtonClickHandler(handler) {

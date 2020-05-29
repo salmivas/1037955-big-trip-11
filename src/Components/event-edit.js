@@ -10,11 +10,11 @@ import moment from "moment";
 
 import "flatpickr/dist/flatpickr.min.css";
 
-const createEventEditOfferMarkup = (offer, id) => {
+const createEventEditOfferMarkup = (offer, isChecked, id) => {
   const offerId = `event-offer-${offer.title.split(` `).join(`-`).toLowerCase()}`;
   return (
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="${offerId}-${id}" name="${offerId}" type="checkbox" ${offer.isChecked ? `checked` : ``}>
+      <input class="event__offer-checkbox  visually-hidden" id="${offerId}-${id}" name="${offerId}" type="checkbox" ${isChecked ? `checked` : ``}>
       <label class="event__offer-label" for="${offerId}-${id}">
         <span class="event__offer-title">${offer.title}</span>
         &plus;
@@ -40,10 +40,14 @@ const createDestinationListMarkup = (city) => {
   );
 };
 
-const createOffersMarkup = (offers, id) => {
-  const offersList = offers.offers.map((offer) => createEventEditOfferMarkup(offer, id)).join(`\n`);
+const createOffersMarkup = (chekedOffers, allTypeOffers, id) => {
+  const offersList = allTypeOffers.offers.length ? allTypeOffers.offers.map((offer) => {
+    const isChecked = !!chekedOffers.filter((it) => it.title === offer.title).length;
+    return createEventEditOfferMarkup(offer, isChecked, id);
+  }).join(`\n`) : ``;
+
   return (
-    offers.offers.length > 0 ?
+    allTypeOffers.offers.length ?
       `<section class="event__section  event__section--offers">
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
         <div class="event__available-offers">
@@ -74,10 +78,12 @@ const createDestinationDescriptionMarkup = (description, pictures) => {
   );
 };
 
-const createEventEditMarkup = (event, cities, isInAddingMode) => {
-  const {basePrice, dateFrom, dateTo, destination, id, isFavorite, offers, type} = event;
+const createEventEditMarkup = (eventModel, offersModel, cities, isInAddingMode) => {
+  const {basePrice, dateFrom, dateTo, destination, id, isFavorite, offers, type} = eventModel;
 
-  const offersMarkup = createOffersMarkup(offers, id);
+  const allTypeOffers = offersModel.getOffersByType(type);
+
+  const offersMarkup = createOffersMarkup(offers, allTypeOffers, id);
   const destinationDescriptionMarkup = createDestinationDescriptionMarkup(destination.description, destination.pictures);
   const eventTypeMovementsMarkup = ACTIVITIES_BY_TYPE.movements.map((activity) => createEventTypeItemMarkup(activity, type, id)).join(`\n`);
   const eventTypePlacesMarkup = ACTIVITIES_BY_TYPE.places.map((activity) => createEventTypeItemMarkup(activity, type, id)).join(`\n`);
@@ -170,8 +176,8 @@ const createEventEditMarkup = (event, cities, isInAddingMode) => {
   );
 };
 
-const createTripEventItemMarkup = (event, cities, isInAddingMode) => {
-  const eventEditMarkup = createEventEditMarkup(event, cities, isInAddingMode);
+const createTripEventItemMarkup = (eventModel, offersModel, cities, isInAddingMode) => {
+  const eventEditMarkup = createEventEditMarkup(eventModel, offersModel, cities, isInAddingMode);
   if (isInAddingMode) {
     return `${eventEditMarkup}`;
   }
@@ -205,20 +211,22 @@ const parseFormData = (formData) => {
     dateFrom: moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`).toDate(),
     dateTo: moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).toDate(),
     basePrice: +formData.get(`event-price`),
+    destination: formData.get(`event-destination`),
+    isFavorite: !!formData.get(`event-favorite`),
   };
 };
 
 export default class EventEdit extends AbstractSmartComponent {
-  constructor(event, destinationsModel, offersModel, isInAddingMode) {
+  constructor(eventModel, destinationsModel, offersModel, isInAddingMode) {
     super();
 
-    this._event = event;
+    this._eventModel = eventModel;
     this._destinationsModel = destinationsModel;
     this._offersModel = offersModel;
-    this._currentDestination = event.destination;
-    this._currentIsFavorite = event.isFavorite;
-    this._currnetOffers = event.offers;
-    this._currentType = event.type;
+    this._currentDestination = eventModel.destination;
+    this._currentIsFavorite = eventModel.isFavorite;
+    this._currnetOffers = eventModel.offers;
+    this._currentType = eventModel.type;
 
     this._isInAddingMode = isInAddingMode;
     this._flatpickr = null;
@@ -232,7 +240,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
   getTemplate() {
     const cities = this._destinationsModel.getCities();
-    return createTripEventItemMarkup(this._event, cities, this._isInAddingMode);
+    return createTripEventItemMarkup(this._eventModel, this._offersModel, cities, this._isInAddingMode);
   }
 
   recoveryListeners() {
@@ -244,15 +252,14 @@ export default class EventEdit extends AbstractSmartComponent {
 
   rerender() {
     super.rerender();
-
     this._applyFlatpickr();
   }
 
   reset() {
-    this._event.destination = this._currentDestination;
-    this._event.isFavorite = this._currentIsFavorite;
-    this._event.offers = this._currnetOffers;
-    this._event.type = this._currentType;
+    this._eventModel.destination = this._currentDestination;
+    this._eventModel.isFavorite = this._currentIsFavorite;
+    this._eventModel.offers = this._currnetOffers;
+    this._eventModel.type = this._currentType;
 
     this.rerender();
   }
@@ -331,8 +338,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
     for (const eventTypeInput of eventsTypeInputList) {
       eventTypeInput.addEventListener(`change`, (evt) => {
-        this._event.type = evt.target.value;
-        this._event.offers = this._offersModel.getOffersByType(evt.target.value);
+        this._eventModel.type = evt.target.value;
 
         this.rerender();
       });
@@ -341,7 +347,7 @@ export default class EventEdit extends AbstractSmartComponent {
     eventInputDestination.addEventListener(`input`, (evt) => {
       let isInputEvent = (Object.prototype.toString.call(evt).indexOf(`InputEvent`) > -1);
       if (!isInputEvent) {
-        this._event.destination = this._destinationsModel.getDestinationByName(evt.target.value);
+        this._eventModel.destination = this._destinationsModel.getDestinationByName(evt.target.value);
 
         this.rerender();
       }

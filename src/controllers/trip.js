@@ -76,11 +76,12 @@ const renderEventsPerDay = (events, destinationsModel, offersModel, dayControlle
 };
 
 export default class TripController {
-  constructor(container, eventsModel, destinationsModel, offersModel) {
+  constructor(container, eventsModel, destinationsModel, offersModel, api) {
     this._container = container;
     this._eventsModel = eventsModel;
     this._destinationsModel = destinationsModel;
     this._offersModel = offersModel;
+    this._api = api;
 
     this._eventControllers = [];
     this._tripDayControllers = [];
@@ -195,25 +196,28 @@ export default class TripController {
   }
 
   _onDataChange(eventController, oldData, updatedData) {
-    const newData = Object.assign({}, oldData, updatedData);
     if (oldData === EmptyEvent) { // Adding
       this._removeCreatingEvent();
       if (updatedData === null) { // Deleting opened adding card
         eventController.destroy();
         this._updateEvents();
       } else { // Adding new data from opened adding card
-        this._eventsModel.addEvent(newData);
+        this._eventsModel.addEvent(updatedData); // TODO: add interaction with the server
         this._updateEvents();
       }
     } else if (updatedData === null) { // Deleting
       this._eventsModel.removeEvent(oldData.id);
       this._updateEvents();
     } else { // Renewing
-      const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
+      this._api.updateEvent(oldData.id, updatedData)
+        .then((eventsModel) => {
+          const isSuccess = this._eventsModel.updateEvent(oldData.id, eventsModel);
 
-      if (isSuccess && eventController !== null) {
-        eventController.render(newData, this._destinationsModel, this._offersModel, EventControllerMode.DEFAULT);
-      }
+          if (isSuccess && eventController !== null) {
+            eventController.render(eventsModel, this._destinationsModel, this._offersModel, EventControllerMode.DEFAULT);
+            this._updateEvents();
+          }
+        });
     }
   }
 

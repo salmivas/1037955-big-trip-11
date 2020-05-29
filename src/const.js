@@ -7,6 +7,8 @@ const ACTIVITIES_BY_TYPE = {
 
 const NUMBER_OF_EVENTS_PER_DAY = 4;
 
+const AUTHORIZATION = `Basic LXlakdj7ad9f8jasQ=`;
+
 const FilterType = {
   EVERYTHING: `everything`,
   FUTURE: `future`,
@@ -14,9 +16,9 @@ const FilterType = {
 };
 
 const URL = {
-  EVENTS: `https://11.ecmascript.pages.academy/big-trip/points`,
-  OFFERS: `https://11.ecmascript.pages.academy/big-trip/offers`,
-  DESTINATIONS: `https://11.ecmascript.pages.academy/big-trip/destinations`,
+  EVENTS: `https://11.ecmascript.pages.academy/big-trip/points/`,
+  OFFERS: `https://11.ecmascript.pages.academy/big-trip/offers/`,
+  DESTINATIONS: `https://11.ecmascript.pages.academy/big-trip/destinations/`,
 };
 
 const NoEventsMessage = {
@@ -30,5 +32,6 @@ export {
   NUMBER_OF_EVENTS_PER_DAY,
   FilterType,
   URL,
-  NoEventsMessage
+  NoEventsMessage,
+  AUTHORIZATION
 };
