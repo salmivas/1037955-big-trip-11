@@ -1,5 +1,6 @@
 import TripEventComponent from "../Components/trip-event";
 import EventEditComponent from "../Components/event-edit";
+import EventModel from "../models/event";
 import {render, RenderPosition, replace, remove} from "../utils/render";
 
 const Mode = {
@@ -26,6 +27,19 @@ const EmptyEvent = {
   type: `taxi`
 };
 
+const parseEditFormData = (data, destinationsModel) => {
+  return new EventModel({
+    "base_price": data.basePrice,
+    "date_from": data.dateFrom,
+    "date_to": data.dateTo,
+    "destination": destinationsModel.getDestinationByName(data.destination),
+    "id": data.id,
+    "is_favorite": data.isFavorite,
+    "offers": data.offers.offers,
+    "type": data.type
+  });
+};
+
 export default class EventController {
   constructor(container, onDataChange, onViewChange) {
     this._container = container;
@@ -38,14 +52,14 @@ export default class EventController {
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
-  render(event, cities, mode) {
+  render(eventModel, destinationsModel, offersModel, mode) {
     this._mode = mode;
     const oldEventComponent = this._eventComponent;
     const oldEventEditComponent = this._eventEditComponent;
     const isInAddingMode = this._mode === Mode.ADDING;
 
-    this._eventComponent = new TripEventComponent(event);
-    this._eventEditComponent = new EventEditComponent(event, cities, isInAddingMode);
+    this._eventComponent = new TripEventComponent(eventModel);
+    this._eventEditComponent = new EventEditComponent(eventModel, destinationsModel, offersModel, isInAddingMode);
 
     this._eventComponent.setRollupButtonClickHandler(() => {
       this._replaceEventToEdit();
@@ -54,16 +68,20 @@ export default class EventController {
 
     this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
-      const data = this._eventEditComponent.getData();
-      this._onDataChange(this, event, data);
+
+      const editFormData = this._eventEditComponent.getData();
+      const data = parseEditFormData(editFormData, destinationsModel);
+      this._onDataChange(this, eventModel, data);
       this._replaceEditToEvent();
     });
 
-    this._eventEditComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, event, null));
+    this._eventEditComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, eventModel, null));
 
     this._eventEditComponent.setFavoriteButtonClickHandler(() => {
-      const data = {isFavorite: !event.isFavorite};
-      this._onDataChange(this, event, data);
+      const newEvent = EventModel.clone(eventModel);
+      newEvent.isFavorite = !newEvent.isFavorite;
+
+      this._onDataChange(this, eventModel, newEvent);
     });
 
     switch (mode) {

@@ -111,4 +111,4 @@ const generateEvents = (count) => {
 
 const events = generateEvents(20);
 
-export {events, cities, offers, destinations};
+export {events, offers, destinations};

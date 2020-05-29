@@ -1,5 +1,6 @@
 import TripDaysComponent from "../Components/trip-days";
 import NoEventsComponent from "../Components/no-events";
+import {NoEventsMessage} from "../const";
 import {render, RenderPosition} from "../utils/render";
 import {SortType} from "../utils/components/sort";
 import EventController, {Mode as EventControllerMode, EmptyEvent} from "./event";
@@ -45,16 +46,16 @@ const renderTripDays = (container, days) => {
   });
 };
 
-const renderEvents = (events, cities, tripDayControllers, onDataChange, onViewChange) => {
+const renderEvents = (events, destinationsModel, offersModel, tripDayControllers, onDataChange, onViewChange) => {
   return events.map((event) => {
     const eventController = new EventController(tripDayControllers[0].getTripEventsList(), onDataChange, onViewChange);
-    eventController.render(event, cities, EventControllerMode.DEFAULT);
+    eventController.render(event, destinationsModel, offersModel, EventControllerMode.DEFAULT);
 
     return eventController;
   });
 };
 
-const renderEventsPerDay = (events, cities, dayControllers, onDataChange, onViewChange) => {
+const renderEventsPerDay = (events, destinationsModel, offersModel, dayControllers, onDataChange, onViewChange) => {
   const eventControllers = [];
   dayControllers.forEach((controller) => {
     const currentDayEvents = events.filter((event) => {
@@ -67,7 +68,7 @@ const renderEventsPerDay = (events, cities, dayControllers, onDataChange, onView
 
     currentDayEvents.forEach((event) => {
       const eventController = new EventController(controller.getTripEventsList(), onDataChange, onViewChange);
-      eventController.render(event, cities, EventControllerMode.DEFAULT);
+      eventController.render(event, destinationsModel, offersModel, EventControllerMode.DEFAULT);
       eventControllers.push(eventController);
     });
   });
@@ -75,21 +76,19 @@ const renderEventsPerDay = (events, cities, dayControllers, onDataChange, onView
 };
 
 export default class TripController {
-  /**
-   * Makes the trip component (route and sort) and adds it on the page
-   * @param {Element} container An element that the controller will draw everything to
-   * @param {Events} eventsModel An instance of the Events class
-   */
-  constructor(container, eventsModel) {
+  constructor(container, eventsModel, destinationsModel, offersModel, api) {
     this._container = container;
     this._eventsModel = eventsModel;
+    this._destinationsModel = destinationsModel;
+    this._offersModel = offersModel;
+    this._api = api;
 
     this._eventControllers = [];
     this._tripDayControllers = [];
     this._creatingEventController = null;
     this._sortController = null;
 
-    this._noEventsComponent = new NoEventsComponent();
+    this._noEventsComponent = null;
     this._tripDaysComponent = new TripDaysComponent();
     this._newEventButton = null;
 
@@ -116,6 +115,7 @@ export default class TripController {
       render(this._container.tripEventsHeader, this._tripDaysComponent, RenderPosition.AFTEREND);
       this._sortController = renderSort(this._container.tripEventsHeader, this._onSortTypeChange);
     } else {
+      this._noEventsComponent = new NoEventsComponent(NoEventsMessage.NO_EVENTS);
       render(this._container.tripEventsHeader, this._noEventsComponent, RenderPosition.AFTEREND);
     }
 
@@ -127,12 +127,10 @@ export default class TripController {
     this._sortController.setSortToDefault();
     this._newEventButton = newEventButton;
 
-    const cities = this._eventsModel.getCities();
-
     const eventsListElement = this._tripDaysComponent.getElement();
     this._creatingEventController = new EventController(eventsListElement, this._onDataChange, this._onViewChange);
     EmptyEvent.id = generateId();
-    this._creatingEventController.render(EmptyEvent, cities, EventControllerMode.ADDING);
+    this._creatingEventController.render(EmptyEvent, this._destinationsModel, this._offersModel, EventControllerMode.ADDING);
   }
 
   _removeEvents() {
@@ -147,18 +145,15 @@ export default class TripController {
   }
 
   _renderEventsPerDay(events) {
-    const cities = this._eventsModel.getCities();
     const days = this._eventsModel.getDays();
 
     this._renderTripDays(days);
-    this._eventControllers = renderEventsPerDay(events, cities, this._tripDayControllers, this._onDataChange, this._onViewChange);
+    this._eventControllers = renderEventsPerDay(events, this._destinationsModel, this._offersModel, this._tripDayControllers, this._onDataChange, this._onViewChange);
   }
 
   _renderEvents(events) {
-    const cities = this._eventsModel.getCities();
-
     this._renderTripDays();
-    this._eventControllers = renderEvents(events, cities, this._tripDayControllers, this._onDataChange, this._onViewChange);
+    this._eventControllers = renderEvents(events, this._destinationsModel, this._offersModel, this._tripDayControllers, this._onDataChange, this._onViewChange);
   }
 
   _rerenderEvents(events, sortType) {
@@ -201,26 +196,28 @@ export default class TripController {
   }
 
   _onDataChange(eventController, oldData, updatedData) {
-    const cities = this._eventsModel.getCities();
-    const newData = Object.assign({}, oldData, updatedData);
     if (oldData === EmptyEvent) { // Adding
       this._removeCreatingEvent();
       if (updatedData === null) { // Deleting opened adding card
         eventController.destroy();
         this._updateEvents();
       } else { // Adding new data from opened adding card
-        this._eventsModel.addEvent(newData);
+        this._eventsModel.addEvent(updatedData); // TODO: add interaction with the server
         this._updateEvents();
       }
     } else if (updatedData === null) { // Deleting
       this._eventsModel.removeEvent(oldData.id);
       this._updateEvents();
     } else { // Renewing
-      const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
+      this._api.updateEvent(oldData.id, updatedData)
+        .then((eventsModel) => {
+          const isSuccess = this._eventsModel.updateEvent(oldData.id, eventsModel);
 
-      if (isSuccess && eventController !== null) {
-        eventController.render(newData, cities, EventControllerMode.DEFAULT);
-      }
+          if (isSuccess && eventController !== null) {
+            eventController.render(eventsModel, this._destinationsModel, this._offersModel, EventControllerMode.DEFAULT);
+            this._updateEvents();
+          }
+        });
     }
   }
 

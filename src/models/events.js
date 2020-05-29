@@ -6,7 +6,6 @@ export default class Events {
   constructor() {
     this._events = [];
     this._days = [];
-    this._cities = [];
 
     this._activeFilterType = FilterType.EVERYTHING;
 
@@ -33,14 +32,6 @@ export default class Events {
 
   setDays() {
     this._days = createDaysData(this.getEvents());
-  }
-
-  getCities() {
-    return this._cities;
-  }
-
-  setCities(cities) {
-    this._cities = Array.from(cities);
   }
 
   removeEvent(id) {
