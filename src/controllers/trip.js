@@ -6,7 +6,6 @@ import {SortType} from "../utils/components/sort";
 import EventController, {Mode as EventControllerMode, EmptyEvent} from "./event";
 import TripDayController from "./day";
 import SortController from "./sort";
-import {generateId} from "../utils/common";
 
 const renderSort = (container, onSortTypeChange) => {
   const sortController = new SortController(container, onSortTypeChange);
@@ -130,7 +129,7 @@ export default class TripController {
 
     const eventsListElement = this._tripDaysComponent.getElement();
     this._creatingEventController = new EventController(eventsListElement, this._onDataChange, this._onViewChange);
-    EmptyEvent.id = generateId();
+
     this._creatingEventController.render(EmptyEvent, this._destinationsModel, this._offersModel, EventControllerMode.ADDING);
   }
 
@@ -196,21 +195,25 @@ export default class TripController {
     this._rerenderEvents(events, currentSortType);
   }
 
-  _onDataChange(eventController, oldData, updatedData) {
+  _onDataChange(eventController, oldData, newData) {
     if (oldData === EmptyEvent) { // Adding
       this._removeCreatingEvent();
-      if (updatedData === null) { // Deleting opened adding card
+      if (newData === null) { // Deleting opened adding card
         eventController.destroy();
         this._updateEvents();
       } else { // Adding new data from opened adding card
-        this._eventsModel.addEvent(updatedData); // TODO: add interaction with the server
-        this._updateEvents();
+        delete newData.id;
+        this._api.createEvent(newData)
+          .then((eventModel) => {
+            this._eventsModel.addEvent(eventModel);
+            this._updateEvents();
+          });
       }
-    } else if (updatedData === null) { // Deleting
+    } else if (newData === null) { // Deleting
       this._eventsModel.removeEvent(oldData.id);
       this._updateEvents();
     } else { // Renewing
-      this._api.updateEvent(oldData.id, updatedData)
+      this._api.updateEvent(oldData.id, newData)
         .then((eventsModel) => {
           const isSuccess = this._eventsModel.updateEvent(oldData.id, eventsModel);
 

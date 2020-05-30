@@ -79,7 +79,7 @@ const createDestinationDescriptionMarkup = (description, pictures) => {
 };
 
 const createEventEditMarkup = (eventModel, offersModel, cities, isInAddingMode) => {
-  const {basePrice, dateFrom, dateTo, destination, id, isFavorite, offers, type} = eventModel;
+  const {basePrice, dateFrom, dateTo, destination, id = `new`, isFavorite, offers, type} = eventModel;
 
   const allTypeOffers = offersModel.getOffersByType(type);
 

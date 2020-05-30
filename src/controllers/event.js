@@ -9,25 +9,21 @@ const Mode = {
   ADDING: `adding`,
 };
 
-const EmptyEvent = {
-  basePrice: 0,
-  dateFrom: new Date(),
-  dateTo: new Date(),
-  destination: {
+const EmptyEvent = new EventModel({
+  "base_price": 0,
+  "date_from": new Date(),
+  "date_to": new Date(),
+  "destination": {
     name: ``,
     description: ``,
     pictures: []
   },
-  id: 0,
-  isFavorite: false,
-  offers: {
-    type: ``,
-    offers: []
-  },
-  type: `taxi`
-};
+  "is_favorite": false,
+  "offers": [],
+  "type": `taxi`
+});
 
-const parseEditFormData = (data, destinationsModel) => {
+const parseFormData = (data, destinationsModel) => {
   return new EventModel({
     "base_price": data.basePrice,
     "date_from": data.dateFrom,
@@ -70,7 +66,7 @@ export default class EventController {
       evt.preventDefault();
 
       const editFormData = this._eventEditComponent.getData();
-      const data = parseEditFormData(editFormData, destinationsModel);
+      const data = parseFormData(editFormData, destinationsModel);
       this._onDataChange(this, eventModel, data);
       this._replaceEditToEvent();
     });

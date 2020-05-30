@@ -1,7 +1,6 @@
 import {
   getRandomIntegerNumber,
   getRandomArrayItem,
-  generateId,
 } from "../utils/common";
 import {TYPES_OF_ACTIVITY} from "../const";
 
@@ -29,6 +28,12 @@ const offersTitles = {
   "check-in": [`Add breakfast`, `King bed`, `Add meal`, `Switch to lux`, `Bar`],
   "sightseeing": [`Book tickets`, `Lunch in a city`, `Photosession`, `Guide services`],
   "restaurant": [`Smorgasbord`, `Fish menu`, `Meat menu`, `Vegetarian menu`],
+};
+
+const generateId = () => {
+  return [...getRandomIntegerNumber(0, Number.MAX_SAFE_INTEGER).toString()].map((val) => {
+    return val.concat(Math.random().toString(36).substring(2, 5));
+  }).join(``);
 };
 
 const getOffer = (title) => {
