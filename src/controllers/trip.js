@@ -106,6 +106,7 @@ export default class TripController {
 
   show() {
     this._container.tripEvents.show();
+    this._sortController.setSortToDefault();
   }
 
   render() {

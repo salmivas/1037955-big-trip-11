@@ -194,9 +194,9 @@ const parseOffers = (form, offersType, receivedOffers) => {
 
   formOffers.forEach((offer) => offer.checked && isChecked.push(offer.name.split(`event-offer-`).slice(1).toString()));
 
-  const renewedOffers = receivedOffers.offers.map((offer) => {
+  const renewedOffers = receivedOffers.offers.filter((offer) => {
     const offerTitle = offer.title.split(` `).join(`-`).toLowerCase();
-    return isChecked.includes(offerTitle) ? Object.assign({}, offer, {isChecked: true}) : Object.assign({}, offer, {isChecked: false});
+    return isChecked.includes(offerTitle) && offer;
   });
 
   return {
@@ -272,7 +272,6 @@ export default class EventEdit extends AbstractSmartComponent {
     const offersType = parsedData.type;
     const receivedOffers = this._offersModel.getOffersByType(offersType);
     const offers = parseOffers(form, offersType, receivedOffers);
-
     return Object.assign({}, parsedData, {offers});
   }
 

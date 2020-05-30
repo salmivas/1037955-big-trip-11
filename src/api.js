@@ -1,5 +1,5 @@
 import Event from "./models/event";
-import {URL} from "./const";
+import {Url, Method} from "./const";
 
 const checkStatus = (response) => {
   if (response.status >= 200 && response.status < 300) {
@@ -10,48 +10,44 @@ const checkStatus = (response) => {
 };
 
 const API = class {
-  constructor(authorization) {
+  constructor(endPoint, authorization) {
+    this._endPoint = endPoint;
     this._authorization = authorization;
   }
 
   getEvents() {
-    return this._getFetch(URL.EVENTS).then(Event.parseEvents);
+    return this._load({url: Url.EVENTS})
+      .then((response) => response.json())
+      .then(Event.parseEvents);
   }
 
   getOffers() {
-    return this._getFetch(URL.OFFERS);
+    return this._load({url: Url.OFFERS}).then((response) => response.json());
   }
 
   getDestinations() {
-    return this._getFetch(URL.DESTINATIONS);
+    return this._load({url: Url.DESTINATIONS}).then((response) => response.json());
   }
 
   updateEvent(id, data) {
-    const headers = this._createAuthorizationHeaders();
-    headers.append(`Content-Type`, `application/json`);
-
-    return fetch(`${URL.EVENTS}${id}`, {
-      method: `PUT`,
+    return this._load({
+      url: `${Url.EVENTS}/${id}`,
+      method: Method.PUT,
       body: JSON.stringify(data.toRaw()),
-      headers,
+      headers: new Headers({"Content-Type": `application/json`})
     })
-      .then(checkStatus)
       .then((response) => response.json())
       .then(Event.parseEvent);
   }
 
-  _createAuthorizationHeaders() {
-    const headers = new Headers();
+  _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
-    return headers;
-  }
 
-  _getFetch(url) {
-    const headers = this._createAuthorizationHeaders();
-
-    return fetch(url, {headers})
+    return fetch(`${this._endPoint}/${url}`, {method, body, headers})
       .then(checkStatus)
-      .then((response) => response.json());
+      .catch((err) => {
+        throw err;
+      });
   }
 };
 

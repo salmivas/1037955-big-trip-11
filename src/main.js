@@ -6,13 +6,13 @@ import FilterController from "../src/controllers/filter";
 import TripController from "./controllers/trip";
 // import {createRouteAndCostData} from "./utils/components/route-and-cost";
 import {render, RenderPosition} from "./utils/render";
-import {NoEventsMessage, AUTHORIZATION} from "./const";
+import {NoEventsMessage, END_POINT, AUTHORIZATION} from "./const";
 import EventsModel from "./models/events";
 import DestinationsModel from "./models/destinations";
 import OffersModel from "./models/offers";
 import API from "./api";
 
-const api = new API(AUTHORIZATION);
+const api = new API(END_POINT, AUTHORIZATION);
 const eventsModel = new EventsModel();
 const destinationsModel = new DestinationsModel();
 const offersModel = new OffersModel();
