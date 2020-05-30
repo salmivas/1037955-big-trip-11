@@ -210,8 +210,11 @@ export default class TripController {
           });
       }
     } else if (newData === null) { // Deleting
-      this._eventsModel.removeEvent(oldData.id);
-      this._updateEvents();
+      this._api.deleteEvent(oldData.id)
+        .then(() => {
+          this._eventsModel.removeEvent(oldData.id);
+          this._updateEvents();
+        });
     } else { // Renewing
       this._api.updateEvent(oldData.id, newData)
         .then((eventsModel) => {
