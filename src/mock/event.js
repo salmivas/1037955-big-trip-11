@@ -102,7 +102,7 @@ const generateEvent = (time = getRandomDate()) => {
     destination: destinations[getRandomArrayItem(cities)],
     id: generateId(),
     isFavorite: Math.random() > 0.8 ? true : false,
-    offers: Object.assign({}, offers[typeOfEvent], {offers: offers[typeOfEvent].offers.map((offer) => Object.assign({}, offer, {isChecked: Math.random() > 0.5}))}),
+    offers: offers[typeOfEvent].offers,
     type: typeOfEvent,
   };
 };

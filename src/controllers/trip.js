@@ -1,7 +1,8 @@
 import TripDaysComponent from "../Components/trip-days";
 import NoEventsComponent from "../Components/no-events";
+import RouteAndCostComponent from "../Components/route-and-cost";
 import {NoEventsMessage} from "../const";
-import {render, RenderPosition} from "../utils/render";
+import {render, RenderPosition, remove} from "../utils/render";
 import {SortType} from "../utils/components/sort";
 import EventController, {Mode as EventControllerMode, EmptyEvent} from "./event";
 import TripDayController from "./day";
@@ -89,6 +90,7 @@ export default class TripController {
 
     this._noEventsComponent = null;
     this._tripDaysComponent = new TripDaysComponent();
+    this._routeAndCostComponent = null;
     this._newEventButton = null;
 
     this._onDataChange = this._onDataChange.bind(this);
@@ -114,6 +116,7 @@ export default class TripController {
     if (events.length > 0) {
       render(this._container.tripEventsHeader, this._tripDaysComponent, RenderPosition.AFTEREND);
       this._sortController = renderSort(this._container.tripEventsHeader, this._onSortTypeChange);
+      this._rerenderRouteAndCost(events);
     } else {
       this._noEventsComponent = new NoEventsComponent(NoEventsMessage.NO_EVENTS);
       render(this._container.tripEventsHeader, this._noEventsComponent, RenderPosition.AFTEREND);
@@ -172,6 +175,17 @@ export default class TripController {
     }
   }
 
+  _rerenderRouteAndCost(events) {
+    if (this._routeAndCostComponent) {
+      remove(this._routeAndCostComponent);
+      this._routeAndCostComponent = null;
+    }
+
+    this._routeAndCostComponent = new RouteAndCostComponent();
+    this._routeAndCostComponent.setData(events);
+    render(this._container.tripMain, this._routeAndCostComponent, RenderPosition.AFTERBEGIN);
+  }
+
   _onSortTypeChange(sortType) {
     const events = this._eventsModel.getEvents();
 
@@ -193,6 +207,7 @@ export default class TripController {
     const currentSortType = this._sortController.getActiveSortType();
 
     this._rerenderEvents(events, currentSortType);
+    this._rerenderRouteAndCost(events);
   }
 
   _onDataChange(eventController, oldData, newData) {
@@ -224,9 +239,6 @@ export default class TripController {
         });
     } else { // Renewing
       this._api.updateEvent(oldData.id, newData)
-        .then(() => {
-          throw new Error(`Error`);
-        })
         .then((eventsModel) => {
           const isSuccess = this._eventsModel.updateEvent(oldData.id, eventsModel);
 
