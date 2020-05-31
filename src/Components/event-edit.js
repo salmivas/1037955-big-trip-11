@@ -10,6 +10,11 @@ import moment from "moment";
 
 import "flatpickr/dist/flatpickr.min.css";
 
+const DefaultData = {
+  deleteButtonText: `Delete`,
+  saveButtonText: `Save`,
+};
+
 const createEventEditOfferMarkup = (offer, isChecked, id) => {
   const offerId = `event-offer-${offer.title.split(` `).join(`-`).toLowerCase()}`;
   return (
@@ -78,11 +83,12 @@ const createDestinationDescriptionMarkup = (description, pictures) => {
   );
 };
 
-const createEventEditMarkup = (eventModel, offersModel, cities, isInAddingMode) => {
-  const {basePrice, dateFrom, dateTo, destination, id, isFavorite, offers, type} = eventModel;
+const createEventEditMarkup = (eventModel, offersModel, cities, isInAddingMode, externalData) => {
+  const {basePrice, dateFrom, dateTo, destination, id = `new`, isFavorite, offers, type} = eventModel;
 
+  const deleteButtonText = externalData.deleteButtonText;
+  const saveButtonText = externalData.saveButtonText;
   const allTypeOffers = offersModel.getOffersByType(type);
-
   const offersMarkup = createOffersMarkup(offers, allTypeOffers, id);
   const destinationDescriptionMarkup = createDestinationDescriptionMarkup(destination.description, destination.pictures);
   const eventTypeMovementsMarkup = ACTIVITIES_BY_TYPE.movements.map((activity) => createEventTypeItemMarkup(activity, type, id)).join(`\n`);
@@ -147,8 +153,8 @@ const createEventEditMarkup = (eventModel, offersModel, cities, isInAddingMode) 
             value="${basePrice}">
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">${isInAddingMode ? `Cancel` : `Delete`}</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit" ${saveButtonText !== DefaultData.saveButtonText ? `disabled` : ``}>${saveButtonText}</button>
+        <button class="event__reset-btn" type="reset" ${deleteButtonText !== DefaultData.deleteButtonText ? `disabled` : ``}>${isInAddingMode ? `Cancel` : deleteButtonText}</button>
 
         ${!isInAddingMode ?
       `<input id="event-favorite-${id}" class="event__favorite-checkbox  visually-hidden" type="checkbox"
@@ -176,8 +182,8 @@ const createEventEditMarkup = (eventModel, offersModel, cities, isInAddingMode) 
   );
 };
 
-const createTripEventItemMarkup = (eventModel, offersModel, cities, isInAddingMode) => {
-  const eventEditMarkup = createEventEditMarkup(eventModel, offersModel, cities, isInAddingMode);
+const createTripEventItemMarkup = (eventModel, offersModel, cities, isInAddingMode, externalData) => {
+  const eventEditMarkup = createEventEditMarkup(eventModel, offersModel, cities, isInAddingMode, externalData);
   if (isInAddingMode) {
     return `${eventEditMarkup}`;
   }
@@ -194,9 +200,9 @@ const parseOffers = (form, offersType, receivedOffers) => {
 
   formOffers.forEach((offer) => offer.checked && isChecked.push(offer.name.split(`event-offer-`).slice(1).toString()));
 
-  const renewedOffers = receivedOffers.offers.map((offer) => {
+  const renewedOffers = receivedOffers.offers.filter((offer) => {
     const offerTitle = offer.title.split(` `).join(`-`).toLowerCase();
-    return isChecked.includes(offerTitle) ? Object.assign({}, offer, {isChecked: true}) : Object.assign({}, offer, {isChecked: false});
+    return isChecked.includes(offerTitle) && offer;
   });
 
   return {
@@ -233,6 +239,7 @@ export default class EventEdit extends AbstractSmartComponent {
     this._submitHandler = null;
     this._favoriteButtonClickHandler = null;
     this._deleteButtonClickHandler = null;
+    this._externalData = DefaultData;
 
     this._applyFlatpickr();
     this._subscribeOnEvents();
@@ -241,7 +248,7 @@ export default class EventEdit extends AbstractSmartComponent {
   getTemplate() {
     const cities = this._destinationsModel.getCities();
 
-    return createTripEventItemMarkup(this._eventModel, this._offersModel, cities, this._isInAddingMode);
+    return createTripEventItemMarkup(this._eventModel, this._offersModel, cities, this._isInAddingMode, this._externalData);
   }
 
   recoveryListeners() {
@@ -272,8 +279,12 @@ export default class EventEdit extends AbstractSmartComponent {
     const offersType = parsedData.type;
     const receivedOffers = this._offersModel.getOffersByType(offersType);
     const offers = parseOffers(form, offersType, receivedOffers);
-
     return Object.assign({}, parsedData, {offers});
+  }
+
+  setData(data) {
+    this._externalData = Object.assign({}, DefaultData, data);
+    this.rerender();
   }
 
   setSubmitHandler(handler) {

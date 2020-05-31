@@ -3,31 +3,31 @@ import EventEditComponent from "../Components/event-edit";
 import EventModel from "../models/event";
 import {render, RenderPosition, replace, remove} from "../utils/render";
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
+const ERROR_STYLE = `box-shadow: 0 0 25px red;`;
+
 const Mode = {
   DEFAULT: `default`,
   EDIT: `edit`,
   ADDING: `adding`,
 };
 
-const EmptyEvent = {
-  basePrice: 0,
-  dateFrom: new Date(),
-  dateTo: new Date(),
-  destination: {
+const EmptyEvent = new EventModel({
+  "base_price": 0,
+  "date_from": new Date(),
+  "date_to": new Date(),
+  "destination": {
     name: ``,
     description: ``,
     pictures: []
   },
-  id: 0,
-  isFavorite: false,
-  offers: {
-    type: ``,
-    offers: []
-  },
-  type: `taxi`
-};
+  "is_favorite": false,
+  "offers": [],
+  "type": `taxi`
+});
 
-const parseEditFormData = (data, destinationsModel) => {
+const parseFormData = (data, destinationsModel) => {
   return new EventModel({
     "base_price": data.basePrice,
     "date_from": data.dateFrom,
@@ -70,12 +70,21 @@ export default class EventController {
       evt.preventDefault();
 
       const editFormData = this._eventEditComponent.getData();
-      const data = parseEditFormData(editFormData, destinationsModel);
+      const data = parseFormData(editFormData, destinationsModel);
+
+      this._eventEditComponent.setData({
+        saveButtonText: `Saving...`,
+      });
+
       this._onDataChange(this, eventModel, data);
-      this._replaceEditToEvent();
     });
 
-    this._eventEditComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, eventModel, null));
+    this._eventEditComponent.setDeleteButtonClickHandler(() => {
+      this._eventEditComponent.setData({
+        deleteButtonText: `Deleting...`,
+      });
+      this._onDataChange(this, eventModel, null);
+    });
 
     this._eventEditComponent.setFavoriteButtonClickHandler(() => {
       const newEvent = EventModel.clone(eventModel);
@@ -114,6 +123,21 @@ export default class EventController {
     remove(this._eventEditComponent);
     remove(this._eventComponent);
     document.removeEventListener(`keydown`, this._onEscKeyDown);
+  }
+
+  shake() {
+    this._eventEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+
+    setTimeout(() => {
+      this._eventEditComponent.getElement().style.animation = ``;
+
+      this._eventEditComponent.setData({
+        saveButtonText: `Save`,
+        deleteButtonText: `Delete`,
+      });
+
+      this._eventEditComponent.getElement().style = ERROR_STYLE;
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   _replaceEventToEdit() {

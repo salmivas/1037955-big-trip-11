@@ -15,10 +15,12 @@ const FilterType = {
   PAST: `past`,
 };
 
-const URL = {
-  EVENTS: `https://11.ecmascript.pages.academy/big-trip/points/`,
-  OFFERS: `https://11.ecmascript.pages.academy/big-trip/offers/`,
-  DESTINATIONS: `https://11.ecmascript.pages.academy/big-trip/destinations/`,
+const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
+
+const Url = {
+  EVENTS: `points`,
+  OFFERS: `offers`,
+  DESTINATIONS: `destinations`,
 };
 
 const NoEventsMessage = {
@@ -26,12 +28,21 @@ const NoEventsMessage = {
   NO_EVENTS: `Click New Event to create your first point`,
 };
 
+const Method = {
+  GET: `GET`,
+  POST: `POST`,
+  PUT: `PUT`,
+  DELETE: `DELETE`
+};
+
 export {
   TYPES_OF_ACTIVITY,
   ACTIVITIES_BY_TYPE,
   NUMBER_OF_EVENTS_PER_DAY,
   FilterType,
-  URL,
+  END_POINT,
+  Url,
   NoEventsMessage,
-  AUTHORIZATION
+  AUTHORIZATION,
+  Method,
 };

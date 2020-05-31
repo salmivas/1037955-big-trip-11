@@ -1,12 +1,12 @@
 import TripDaysComponent from "../Components/trip-days";
 import NoEventsComponent from "../Components/no-events";
+import RouteAndCostComponent from "../Components/route-and-cost";
 import {NoEventsMessage} from "../const";
-import {render, RenderPosition} from "../utils/render";
+import {render, RenderPosition, remove} from "../utils/render";
 import {SortType} from "../utils/components/sort";
 import EventController, {Mode as EventControllerMode, EmptyEvent} from "./event";
 import TripDayController from "./day";
 import SortController from "./sort";
-import {generateId} from "../utils/common";
 
 const renderSort = (container, onSortTypeChange) => {
   const sortController = new SortController(container, onSortTypeChange);
@@ -90,6 +90,7 @@ export default class TripController {
 
     this._noEventsComponent = null;
     this._tripDaysComponent = new TripDaysComponent();
+    this._routeAndCostComponent = null;
     this._newEventButton = null;
 
     this._onDataChange = this._onDataChange.bind(this);
@@ -106,6 +107,7 @@ export default class TripController {
 
   show() {
     this._container.tripEvents.show();
+    this._sortController.setSortToDefault();
   }
 
   render() {
@@ -114,6 +116,7 @@ export default class TripController {
     if (events.length > 0) {
       render(this._container.tripEventsHeader, this._tripDaysComponent, RenderPosition.AFTEREND);
       this._sortController = renderSort(this._container.tripEventsHeader, this._onSortTypeChange);
+      this._rerenderRouteAndCost(events);
     } else {
       this._noEventsComponent = new NoEventsComponent(NoEventsMessage.NO_EVENTS);
       render(this._container.tripEventsHeader, this._noEventsComponent, RenderPosition.AFTEREND);
@@ -129,7 +132,7 @@ export default class TripController {
 
     const eventsListElement = this._tripDaysComponent.getElement();
     this._creatingEventController = new EventController(eventsListElement, this._onDataChange, this._onViewChange);
-    EmptyEvent.id = generateId();
+
     this._creatingEventController.render(EmptyEvent, this._destinationsModel, this._offersModel, EventControllerMode.ADDING);
   }
 
@@ -172,6 +175,17 @@ export default class TripController {
     }
   }
 
+  _rerenderRouteAndCost(events) {
+    if (this._routeAndCostComponent) {
+      remove(this._routeAndCostComponent);
+      this._routeAndCostComponent = null;
+    }
+
+    this._routeAndCostComponent = new RouteAndCostComponent();
+    this._routeAndCostComponent.setData(events);
+    render(this._container.tripMain, this._routeAndCostComponent, RenderPosition.AFTERBEGIN);
+  }
+
   _onSortTypeChange(sortType) {
     const events = this._eventsModel.getEvents();
 
@@ -193,23 +207,38 @@ export default class TripController {
     const currentSortType = this._sortController.getActiveSortType();
 
     this._rerenderEvents(events, currentSortType);
+    this._rerenderRouteAndCost(events);
   }
 
-  _onDataChange(eventController, oldData, updatedData) {
-    if (oldData === EmptyEvent) { // Adding
-      this._removeCreatingEvent();
-      if (updatedData === null) { // Deleting opened adding card
+  _onDataChange(eventController, oldData, newData) {
+    if (oldData === EmptyEvent) {
+      if (newData === null) {
         eventController.destroy();
+        this._newEventButton.disabled = false;
         this._updateEvents();
-      } else { // Adding new data from opened adding card
-        this._eventsModel.addEvent(updatedData); // TODO: add interaction with the server
-        this._updateEvents();
+      } else {
+        delete newData.id;
+        this._api.createEvent(newData)
+          .then((eventModel) => {
+            this._eventsModel.addEvent(eventModel);
+            this._removeCreatingEvent();
+            this._updateEvents();
+          })
+          .catch(() => {
+            eventController.shake();
+          });
       }
-    } else if (updatedData === null) { // Deleting
-      this._eventsModel.removeEvent(oldData.id);
-      this._updateEvents();
-    } else { // Renewing
-      this._api.updateEvent(oldData.id, updatedData)
+    } else if (newData === null) {
+      this._api.deleteEvent(oldData.id)
+        .then(() => {
+          this._eventsModel.removeEvent(oldData.id);
+          this._updateEvents();
+        })
+        .catch(() => {
+          eventController.shake();
+        });
+    } else {
+      this._api.updateEvent(oldData.id, newData)
         .then((eventsModel) => {
           const isSuccess = this._eventsModel.updateEvent(oldData.id, eventsModel);
 
@@ -217,6 +246,9 @@ export default class TripController {
             eventController.render(eventsModel, this._destinationsModel, this._offersModel, EventControllerMode.DEFAULT);
             this._updateEvents();
           }
+        })
+        .catch(() => {
+          eventController.shake();
         });
     }
   }
