@@ -3,6 +3,10 @@ import EventEditComponent from "../Components/event-edit";
 import EventModel from "../models/event";
 import {render, RenderPosition, replace, remove} from "../utils/render";
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
+const ERROR_STYLE = `box-shadow: 0 0 25px red;`;
+
 const Mode = {
   DEFAULT: `default`,
   EDIT: `edit`,
@@ -67,11 +71,20 @@ export default class EventController {
 
       const editFormData = this._eventEditComponent.getData();
       const data = parseFormData(editFormData, destinationsModel);
+
+      this._eventEditComponent.setData({
+        saveButtonText: `Saving...`,
+      });
+
       this._onDataChange(this, eventModel, data);
-      this._replaceEditToEvent();
     });
 
-    this._eventEditComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, eventModel, null));
+    this._eventEditComponent.setDeleteButtonClickHandler(() => {
+      this._eventEditComponent.setData({
+        deleteButtonText: `Deleting...`,
+      });
+      this._onDataChange(this, eventModel, null);
+    });
 
     this._eventEditComponent.setFavoriteButtonClickHandler(() => {
       const newEvent = EventModel.clone(eventModel);
@@ -110,6 +123,21 @@ export default class EventController {
     remove(this._eventEditComponent);
     remove(this._eventComponent);
     document.removeEventListener(`keydown`, this._onEscKeyDown);
+  }
+
+  shake() {
+    this._eventEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+
+    setTimeout(() => {
+      this._eventEditComponent.getElement().style.animation = ``;
+
+      this._eventEditComponent.setData({
+        saveButtonText: `Save`,
+        deleteButtonText: `Delete`,
+      });
+
+      this._eventEditComponent.getElement().style = ERROR_STYLE;
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   _replaceEventToEdit() {

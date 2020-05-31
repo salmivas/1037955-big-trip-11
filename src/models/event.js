@@ -37,17 +37,3 @@ export default class Event {
     return new Event(data.toRaw());
   }
 }
-
-const EmptyEvent = new Event({
-  "base_price": 0,
-  "date_from": new Date(),
-  "date_to": new Date(),
-  "destination": {
-    name: ``,
-    description: ``,
-    pictures: []
-  },
-  "is_favorite": false,
-  "offers": [],
-  "type": `taxi`
-});

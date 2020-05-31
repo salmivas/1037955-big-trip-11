@@ -197,16 +197,20 @@ export default class TripController {
 
   _onDataChange(eventController, oldData, newData) {
     if (oldData === EmptyEvent) { // Adding
-      this._removeCreatingEvent();
       if (newData === null) { // Deleting opened adding card
         eventController.destroy();
+        this._newEventButton.disabled = false;
         this._updateEvents();
       } else { // Adding new data from opened adding card
         delete newData.id;
         this._api.createEvent(newData)
           .then((eventModel) => {
             this._eventsModel.addEvent(eventModel);
+            this._removeCreatingEvent();
             this._updateEvents();
+          })
+          .catch(() => {
+            eventController.shake();
           });
       }
     } else if (newData === null) { // Deleting
@@ -214,9 +218,15 @@ export default class TripController {
         .then(() => {
           this._eventsModel.removeEvent(oldData.id);
           this._updateEvents();
+        })
+        .catch(() => {
+          eventController.shake();
         });
     } else { // Renewing
       this._api.updateEvent(oldData.id, newData)
+        .then(() => {
+          throw new Error(`Error`);
+        })
         .then((eventsModel) => {
           const isSuccess = this._eventsModel.updateEvent(oldData.id, eventsModel);
 
@@ -224,6 +234,9 @@ export default class TripController {
             eventController.render(eventsModel, this._destinationsModel, this._offersModel, EventControllerMode.DEFAULT);
             this._updateEvents();
           }
+        })
+        .catch(() => {
+          eventController.shake();
         });
     }
   }
