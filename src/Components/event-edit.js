@@ -365,13 +365,12 @@ export default class EventEdit extends AbstractSmartComponent {
     }
 
     eventInputDestination.addEventListener(`input`, (evt) => {
-      const isInputEvent = (Object.prototype.toString.call(evt).indexOf(`InputEvent`) > -1);
-      if (!isInputEvent) {
-        this._eventModel.destination = this._destinationsModel.getDestinationByName(evt.target.value);
-
+      const destination = this._destinationModel.getDestinationByName(evt.target.value);
+      if (destination) {
+        this._eventModel.destination = destination;
         this.rerender();
       }
-    }, false);
+    });
 
     eventInputPrice.addEventListener(`keypress`, (evt) => {
       const char = String.fromCharCode(evt.which);
