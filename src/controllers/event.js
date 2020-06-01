@@ -40,7 +40,7 @@ const parseFormData = (data, destinationsModel) => {
   });
 };
 
-export default class EventController {
+export default class Event {
   constructor(container, onDataChange, onViewChange) {
     this._container = container;
     this._onDataChange = onDataChange;

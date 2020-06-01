@@ -7,7 +7,7 @@ const ACTIVITIES_BY_TYPE = {
 
 const NUMBER_OF_EVENTS_PER_DAY = 4;
 
-const AUTHORIZATION = `Basic LXlakdj7ad9f8jasQ=`;
+const AUTHORIZATION = `Basic a2lJZdhjayoIKo1b=`;
 
 const FilterType = {
   EVERYTHING: `everything`,

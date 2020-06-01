@@ -2,7 +2,7 @@ import SortComponent from "../Components/sort";
 import {SortType} from "../utils/components/sort";
 import {render, replace, RenderPosition} from "../utils/render";
 
-export default class SortController {
+export default class Sort {
   constructor(container, onSortTypeChange) {
     this._container = container;
 

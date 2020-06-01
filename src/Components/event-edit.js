@@ -1,6 +1,7 @@
 import {
   createEventTitle,
   createTimeInputFormat,
+  calculateOrder,
 } from "../utils/components/trip-event";
 import {ACTIVITIES_BY_TYPE} from "../const";
 import {capitalize} from "../utils/common";
@@ -318,22 +319,25 @@ export default class EventEdit extends AbstractSmartComponent {
 
   _applyFlatpickr() {
     this._removeFlatpickr();
-    const eventStartTime = this.getElement().querySelector(`[name = "event-start-time"]`);
-    const eventEndTime = this.getElement().querySelector(`[name = "event-end-time"]`);
 
     this._flatpickr = {
-      startTime: this._setFlatpickr(eventStartTime),
-      endTime: this._setFlatpickr(eventEndTime).set(`minDate`, eventStartTime.value),
+      startTime: this._setFlatpickr(this.getElement().querySelector(`[name = "event-start-time"]`)),
+      endTime: this._setFlatpickr(this.getElement().querySelector(`[name = "event-end-time"]`)),
     };
   }
 
   _setFlatpickr(element) {
+    const eventStartTime = this.getElement().querySelector(`[name = "event-start-time"]`);
+    const eventEndTime = this.getElement().querySelector(`[name = "event-end-time"]`);
+
     return flatpickr(element, {
       enableTime: true,
       // eslint-disable-next-line camelcase
       time_24hr: true,
       allowInput: true,
       dateFormat: `d/m/y H:i`,
+      maxDate: element.name === eventEndTime.name ? `` : eventEndTime.value,
+      minDate: element.name === eventStartTime.name ? `` : eventStartTime.value,
     });
   }
 
@@ -361,7 +365,7 @@ export default class EventEdit extends AbstractSmartComponent {
     }
 
     eventInputDestination.addEventListener(`input`, (evt) => {
-      let isInputEvent = (Object.prototype.toString.call(evt).indexOf(`InputEvent`) > -1);
+      const isInputEvent = (Object.prototype.toString.call(evt).indexOf(`InputEvent`) > -1);
       if (!isInputEvent) {
         this._eventModel.destination = this._destinationsModel.getDestinationByName(evt.target.value);
 
@@ -377,8 +381,12 @@ export default class EventEdit extends AbstractSmartComponent {
       }
     });
 
-    eventEndTime.addEventListener(`change`, () => {
-      eventEndTime.value = moment(eventEndTime.value).isAfter(eventStartTime.value) ? eventEndTime.value : eventStartTime.value;
+    eventEndTime.addEventListener(`input`, (evt) => {
+      eventEndTime.value = calculateOrder(evt.target.value, eventStartTime.value).isAfter ? evt.target.value : eventStartTime.value;
+    });
+
+    eventStartTime.addEventListener(`input`, (evt) => {
+      eventStartTime.value = calculateOrder(evt.target.value, eventEndTime.value).isBefore ? evt.target.value : eventEndTime.value;
     });
   }
 }

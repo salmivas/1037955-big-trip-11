@@ -19,10 +19,20 @@ const createTimeDurationFormat = (dateStart, dateEnd) => {
   return `${duration.days() > 0 ? `${castTimeFormat(duration.days())}D` : ``}${duration.hours() > 0 ? ` ${castTimeFormat(duration.hours())}H` : ``}${duration.minutes() > 0 ? ` ${castTimeFormat(duration.minutes())}M` : ``}`;
 };
 
+const calculateOrder = (start, end) => {
+  const momentStart = moment(start, `DD/MM/YY hh:mm`);
+  const momentEnd = moment(end, `DD/MM/YY hh:mm`);
+  return {
+    isBefore: moment(momentStart).isBefore(momentEnd),
+    isAfter: moment(momentStart).isAfter(momentEnd),
+  };
+};
+
 export {
   createEventTitle,
   createDateTimeFormat,
   createTimeFormat,
   createTimeDurationFormat,
   createTimeInputFormat,
+  calculateOrder,
 };

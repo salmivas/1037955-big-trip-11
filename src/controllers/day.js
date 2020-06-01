@@ -1,7 +1,7 @@
 import TripDayComponent from "../Components/trip-day";
 import {render, RenderPosition, remove} from "../utils/render";
 
-export default class TripDayController {
+export default class TripDay {
   constructor(container, day) {
     this._container = container;
     this._day = day;

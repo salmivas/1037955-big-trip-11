@@ -4,6 +4,38 @@ import Chart from "chart.js";
 import ChartDataLables from "chartjs-plugin-datalabels";
 import moment from "moment";
 
+const ChartTitle = {
+  MONEY: `MONEY`,
+  TRANSPORT: `TRANSPORT`,
+  TIME_SPENT: `TIME SPENT`,
+};
+
+const Colors = {
+  WHITE: `#ffffff`,
+  BLACK: `#000000`,
+};
+
+const Position = {
+  START: `start`,
+  END: `end`,
+  LEFT: `left`
+};
+
+const FontSize = {
+  DATALABLES: 13,
+  TITLE: 23,
+  TICKS: 13,
+};
+
+const BarSize = {
+  MIN_BAR_LENGTH: 50,
+  BAR_THICKNESS: 44,
+};
+
+const Padding = {
+  TICKS: 5,
+};
+
 const getAllCurrentEventsTypes = (events) => events.map((event) => event.type.toUpperCase());
 
 const getCertainCurrentEventsTypes = (events) => [...new Set(getAllCurrentEventsTypes(events))].sort();
@@ -29,43 +61,43 @@ const renderMoneyChart = (moneyCtx, events) => {
       labels: eventsNames,
       datasets: [{
         data: eventsCosts,
-        backgroundColor: `#ffffff`,
-        hoverBackgroundColor: `#ffffff`,
-        anchor: `start`
+        backgroundColor: Colors.WHITE,
+        hoverBackgroundColor: Colors.WHITE,
+        anchor: Position.START
       }]
     },
     options: {
       plugins: {
         datalabels: {
           font: {
-            size: 13
+            size: FontSize.DATALABLES
           },
-          color: `#000000`,
-          anchor: `end`,
-          align: `start`,
+          color: Colors.BLACK,
+          anchor: Position.END,
+          align: Position.START,
           formatter: (val) => `€ ${val}`
         }
       },
       title: {
         display: true,
-        text: `MONEY`,
-        fontColor: `#000000`,
-        fontSize: 23,
-        position: `left`
+        text: ChartTitle.MONEY,
+        fontColor: Colors.BLACK,
+        fontSize: FontSize.TITLE,
+        position: Position.LEFT
       },
       scales: {
         yAxes: [{
           ticks: {
-            fontColor: `#000000`,
-            padding: 5,
-            fontSize: 13,
+            fontColor: Colors.BLACK,
+            padding: Padding.TICKS,
+            fontSize: FontSize.TICKS,
           },
           gridLines: {
             display: false,
             drawBorder: false
           },
         }],
-        barThickness: 44,
+        barThickness: BarSize.BAR_THICKNESS,
         xAxes: [{
           ticks: {
             display: false,
@@ -76,7 +108,7 @@ const renderMoneyChart = (moneyCtx, events) => {
             drawBorder: false
           },
         }],
-        minBarLength: 50
+        minBarLength: BarSize.MIN_BAR_LENGTH
       },
       legend: {
         display: false,
@@ -99,43 +131,43 @@ const renderTransportChart = (transportCtx, events) => {
       labels: eventsTransports,
       datasets: [{
         data: numberOfTimes,
-        backgroundColor: `#ffffff`,
-        hoverBackgroundColor: `#ffffff`,
-        anchor: `start`
+        backgroundColor: Colors.WHITE,
+        hoverBackgroundColor: Colors.WHITE,
+        anchor: Position.START
       }]
     },
     options: {
       plugins: {
         datalabels: {
           font: {
-            size: 13
+            size: FontSize.DATALABLES
           },
-          color: `#000000`,
-          anchor: `end`,
-          align: `start`,
+          color: Colors.BLACK,
+          anchor: Position.END,
+          align: Position.START,
           formatter: (val) => `${val}x`
         }
       },
       title: {
         display: true,
-        text: `TRANSPORT`,
-        fontColor: `#000000`,
-        fontSize: 23,
-        position: `left`
+        text: ChartTitle.TRANSPORT,
+        fontColor: Colors.BLACK,
+        fontSize: FontSize.TITLE,
+        position: Position.LEFT
       },
       scales: {
         yAxes: [{
           ticks: {
-            fontColor: `#000000`,
-            padding: 5,
-            fontSize: 13,
+            fontColor: Colors.BLACK,
+            padding: Padding.TICKS,
+            fontSize: FontSize.TICKS,
           },
           gridLines: {
             display: false,
             drawBorder: false
           },
         }],
-        barThickness: 44,
+        barThickness: BarSize.BAR_THICKNESS,
         xAxes: [{
           ticks: {
             display: false,
@@ -146,7 +178,7 @@ const renderTransportChart = (transportCtx, events) => {
             drawBorder: false
           },
         }],
-        minBarLength: 50
+        minBarLength: BarSize.MIN_BAR_LENGTH
       },
       legend: {
         display: false
@@ -173,43 +205,43 @@ const renderTimeSpentChart = (timeSpendCtx, events) => {
       labels: eventsPlacesNames,
       datasets: [{
         data: eventsDuration,
-        backgroundColor: `#ffffff`,
-        hoverBackgroundColor: `#ffffff`,
-        anchor: `start`
+        backgroundColor: Colors.WHITE,
+        hoverBackgroundColor: Colors.WHITE,
+        anchor: Position.START
       }]
     },
     options: {
       plugins: {
         datalabels: {
           font: {
-            size: 13
+            size: FontSize.DATALABLES
           },
-          color: `#000000`,
-          anchor: `end`,
-          align: `start`,
+          color: Colors.BLACK,
+          anchor: Position.END,
+          align: Position.START,
           formatter: (val) => `${val}H`
         }
       },
       title: {
         display: true,
-        text: `TIME SPENT`,
-        fontColor: `#000000`,
-        fontSize: 23,
-        position: `left`
+        text: ChartTitle.TIME_SPENT,
+        fontColor: Colors.BLACK,
+        fontSize: FontSize.TITLE,
+        position: Position.LEFT
       },
       scales: {
         yAxes: [{
           ticks: {
-            fontColor: `#000000`,
-            padding: 5,
-            fontSize: 13,
+            fontColor: Colors.BLACK,
+            padding: Padding.TICKS,
+            fontSize: FontSize.TICKS,
           },
           gridLines: {
             display: false,
             drawBorder: false
           },
         }],
-        barThickness: 44,
+        barThickness: BarSize.BAR_THICKNESS,
         xAxes: [{
           ticks: {
             display: false,
@@ -220,7 +252,7 @@ const renderTimeSpentChart = (timeSpendCtx, events) => {
             drawBorder: false
           },
         }],
-        minBarLength: 50
+        minBarLength: BarSize.MIN_BAR_LENGTH
       },
       legend: {
         display: false

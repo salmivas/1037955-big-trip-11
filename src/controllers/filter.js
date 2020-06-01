@@ -2,7 +2,7 @@ import FilterComponent from "../Components/filters";
 import {FilterType} from "../const";
 import {render, replace, RenderPosition} from "../utils/render";
 
-export default class FilterController {
+export default class Filter {
   constructor(container, eventsModel) {
     this._container = container;
     this._eventsModel = eventsModel;

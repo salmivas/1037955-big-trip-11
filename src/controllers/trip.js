@@ -75,7 +75,7 @@ const renderEventsPerDay = (events, destinationsModel, offersModel, dayControlle
   return eventControllers;
 };
 
-export default class TripController {
+export default class Trip {
   constructor(container, eventsModel, destinationsModel, offersModel, api) {
     this._container = container;
     this._eventsModel = eventsModel;
@@ -164,6 +164,7 @@ export default class TripController {
 
     switch (sortType) {
       case SortType.DEFAULT:
+        this._eventsModel.setDays();
         this._renderEventsPerDay(getSortedEvents(events, SortType.DEFAULT));
         break;
       case SortType.TIME_DOWN:
