@@ -318,10 +318,12 @@ export default class EventEdit extends AbstractSmartComponent {
 
   _applyFlatpickr() {
     this._removeFlatpickr();
+    const eventStartTime = this.getElement().querySelector(`[name = "event-start-time"]`);
+    const eventEndTime = this.getElement().querySelector(`[name = "event-end-time"]`);
 
     this._flatpickr = {
-      startTime: this._setFlatpickr(this.getElement().querySelector(`[name = "event-start-time"]`)),
-      endTime: this._setFlatpickr(this.getElement().querySelector(`[name = "event-end-time"]`))
+      startTime: this._setFlatpickr(eventStartTime),
+      endTime: this._setFlatpickr(eventEndTime).set(`minDate`, eventStartTime.value),
     };
   }
 
@@ -347,6 +349,8 @@ export default class EventEdit extends AbstractSmartComponent {
     const eventsTypeInputList = element.querySelectorAll(`.event__type-input`);
     const eventInputDestination = element.querySelector(`.event__input--destination`);
     const eventInputPrice = element.querySelector(`.event__input--price`);
+    const eventStartTime = element.querySelector(`[name = "event-start-time"]`);
+    const eventEndTime = element.querySelector(`[name = "event-end-time"]`);
 
     for (const eventTypeInput of eventsTypeInputList) {
       eventTypeInput.addEventListener(`change`, (evt) => {
@@ -371,6 +375,10 @@ export default class EventEdit extends AbstractSmartComponent {
       if (!(/[0-9]/.test(char))) {
         evt.preventDefault();
       }
+    });
+
+    eventEndTime.addEventListener(`change`, () => {
+      eventEndTime.value = moment(eventEndTime.value).isAfter(eventStartTime.value) ? eventEndTime.value : eventStartTime.value;
     });
   }
 }
