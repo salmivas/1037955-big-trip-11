@@ -364,8 +364,8 @@ export default class EventEdit extends AbstractSmartComponent {
       });
     }
 
-    eventInputDestination.addEventListener(`input`, (evt) => {
-      const destination = this._destinationModel.getDestinationByName(evt.target.value);
+    eventInputDestination.addEventListener(`change`, (evt) => {
+      const destination = this._destinationsModel.getDestinationByName(evt.target.value);
       if (destination) {
         this._eventModel.destination = destination;
         this.rerender();
