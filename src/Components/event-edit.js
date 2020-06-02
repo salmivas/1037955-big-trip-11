@@ -382,10 +382,12 @@ export default class EventEdit extends AbstractSmartComponent {
 
     eventEndTime.addEventListener(`input`, (evt) => {
       eventEndTime.value = calculateOrder(evt.target.value, eventStartTime.value).isAfter ? evt.target.value : eventStartTime.value;
+      this._flatpickr.startTime.set(`maxDate`, eventEndTime.value);
     });
 
     eventStartTime.addEventListener(`input`, (evt) => {
       eventStartTime.value = calculateOrder(evt.target.value, eventEndTime.value).isBefore ? evt.target.value : eventEndTime.value;
+      this._flatpickr.endTime.set(`minDate`, eventStartTime.value);
     });
   }
 }
