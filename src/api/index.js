@@ -1,5 +1,5 @@
-import Event from "./models/event";
-import {Url, Method} from "./const";
+import Event from "../models/event";
+import {Url, Method} from "../const";
 
 const checkStatus = (response) => {
   if (response.status >= 200 && response.status < 300) {

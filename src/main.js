@@ -8,9 +8,11 @@ import {NoEventsMessage, END_POINT, AUTHORIZATION} from "./const";
 import EventsModel from "./models/events";
 import DestinationsModel from "./models/destinations";
 import OffersModel from "./models/offers";
-import API from "./api";
+import API from "./api/index";
+import Provider from "./api/provider";
 
 const api = new API(END_POINT, AUTHORIZATION);
+const apiWithProvider = new Provider(api);
 const eventsModel = new EventsModel();
 const destinationsModel = new DestinationsModel();
 const offersModel = new OffersModel();
@@ -54,7 +56,7 @@ newEventButton.disabled = true;
 
 const filterController = new FilterController(tripFilters, eventsModel);
 filterController.render();
-const tripController = new TripController(tripEventsContainer, eventsModel, destinationsModel, offersModel, api);
+const tripController = new TripController(tripEventsContainer, eventsModel, destinationsModel, offersModel, apiWithProvider);
 
 newEventButton.addEventListener(`click`, (evt) => {
   evt.target.disabled = !evt.target.disabled;
@@ -76,12 +78,12 @@ switchTripViewComponent.setOnChange((menuItem) => {
   }
 });
 
-api.getOffers()
+apiWithProvider.getOffers()
   .then((offers) => {
     offersModel.setOffers(offers);
   })
   .then(() => {
-    api.getEvents()
+    apiWithProvider.getEvents()
         .then((events) => {
           eventsModel.setEvents(events);
           eventsModel.setDays();
@@ -93,7 +95,7 @@ api.getOffers()
 .catch();
 
 
-api.getDestinations()
+apiWithProvider.getDestinations()
   .then((destinations) => {
     destinationsModel.setDestinations(destinations);
   });
