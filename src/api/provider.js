@@ -14,7 +14,13 @@ export default class Provider {
     if (isOnline()) {
       return this._api.getEvents()
         .then((events) => {
-          events.forEach((event) => this._store.setItem(event.id, event));
+          const items = events.reduce((acc, current) => {
+            return Object.assign({}, acc, {
+              [current.id]: current,
+            });
+          }, {});
+
+          this._store.setItems(items);
 
           return events;
         });
