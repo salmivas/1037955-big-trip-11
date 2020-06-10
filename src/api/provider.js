@@ -1,18 +1,28 @@
+import Event from "../models/event";
+
 const isOnline = () => {
   return window.navigator.onLine;
 };
 
 export default class Provider {
-  constructor(api) {
+  constructor(api, store) {
     this._api = api;
+    this._store = store;
   }
 
   getEvents() {
     if (isOnline()) {
-      return this._api.getEvents();
+      return this._api.getEvents()
+        .then((events) => {
+          events.forEach((event) => this._store.setItem(event.id, event));
+
+          return events;
+        });
     }
 
-    return Promise.reject(`offline logic in not implemented`);
+    const storeEvents = Object.values(this._store.getItems());
+
+    return Promise.resolve(Event.parseEvents(storeEvents));
   }
 
   getOffers() {
@@ -33,10 +43,19 @@ export default class Provider {
 
   updateEvent(id, data) {
     if (isOnline()) {
-      return this._api.updateEvent(id, data);
+      return this._api.updateEvent(id, data)
+        .then((newEvent) => {
+          this._store.setItem(newEvent.id, newEvent.toRaw());
+
+          return newEvent;
+        });
     }
 
-    return Promise.reject(`offline logic in not implemented`);
+    const localEvent = Event.clone(Object.assign(data, {id}));
+
+    this._store.setItem(id, localEvent.toRaw());
+
+    return Promise.resolve(localEvent);
   }
 
   createEvent(event) {
@@ -49,9 +68,12 @@ export default class Provider {
 
   deleteEvent(id) {
     if (isOnline) {
-      return this._api.deleteEvent(id);
+      return this._api.deleteEvent(id)
+        .then(() => this._store.removeItem(id));
     }
 
-    return Promise.reject(`offline logic in not implemented`);
+    this._store.removeItem(id);
+
+    return Promise.resolve();
   }
 }

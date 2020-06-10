@@ -35,6 +35,10 @@ const Method = {
   DELETE: `DELETE`
 };
 
+const STORE_PREFIX = `big-trip-localstorage`;
+const STORE_VER = `v1`;
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
+
 export {
   TYPES_OF_ACTIVITY,
   ACTIVITIES_BY_TYPE,
@@ -45,4 +49,5 @@ export {
   NoEventsMessage,
   AUTHORIZATION,
   Method,
+  STORE_NAME
 };
