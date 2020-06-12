@@ -21,6 +21,7 @@ const Url = {
   EVENTS: `points`,
   OFFERS: `offers`,
   DESTINATIONS: `destinations`,
+  EVENTS_SYNC: `points/sync`,
 };
 
 const NoEventsMessage = {

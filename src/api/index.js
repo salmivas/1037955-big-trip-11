@@ -55,6 +55,16 @@ export default class Index {
     return this._load({url: `${Url.EVENTS}/${id}`, method: Method.DELETE});
   }
 
+  sync(data) {
+    return this._load({
+      url: Url.EVENTS_SYNC,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then((response) => response.json());
+  }
+
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
 
