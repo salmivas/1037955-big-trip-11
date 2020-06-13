@@ -32,4 +32,4 @@ const createRouteAndCostData = (events) => {
   };
 };
 
-export {createRouteAndCostData};
+export {createRouteAndCostData, sortEventsByDate};

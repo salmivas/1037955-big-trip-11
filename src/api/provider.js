@@ -1,6 +1,7 @@
 import Event from "../models/event";
 import Store from "../api/store.js";
 import {STORE_NAME} from "../const";
+import {nanoid} from "nanoid";
 
 const isOnline = () => {
   return window.navigator.onLine;
@@ -94,10 +95,20 @@ export default class Provider {
 
   createEvent(event) {
     if (isOnline()) {
-      return this._api.createEvent(event);
+      return this._api.createEvent(event)
+        .then((newEvent) => {
+          this._eventsStore.setItem(newEvent.id, newEvent.toRaw());
+
+          return newEvent;
+        });
     }
 
-    return Promise.reject(`offline logic in not implemented`);
+    const localNewEventId = nanoid();
+    const localNewEvent = Event.clone(Object.assign(event, {id: localNewEventId}));
+
+    this._eventsStore.setItem(localNewEvent.id, localNewEvent.toRaw());
+
+    return Promise.resolve(localNewEvent);
   }
 
   deleteEvent(id) {

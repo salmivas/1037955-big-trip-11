@@ -4,6 +4,7 @@ import RouteAndCostComponent from "../Components/route-and-cost";
 import {NoEventsMessage} from "../const";
 import {render, RenderPosition, remove} from "../utils/render";
 import {SortType} from "../utils/components/sort";
+import {sortEventsByDate} from "../utils/components/route-and-cost";
 import EventController, {Mode as EventControllerMode, EmptyEvent} from "./event";
 import TripDayController from "./day";
 import SortController from "./sort";
@@ -66,7 +67,7 @@ const renderEventsPerDay = (events, destinationsModel, offersModel, dayControlle
       return;
     }
 
-    currentDayEvents.forEach((event) => {
+    sortEventsByDate(currentDayEvents).forEach((event) => {
       const eventController = new EventController(controller.getTripEventsList(), onDataChange, onViewChange);
       eventController.render(event, destinationsModel, offersModel, EventControllerMode.DEFAULT);
       eventControllers.push(eventController);
