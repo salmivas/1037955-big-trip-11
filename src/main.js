@@ -4,17 +4,19 @@ import NoEventsComponent from "../src/Components/no-events";
 import FilterController from "../src/controllers/filter";
 import TripController from "./controllers/trip";
 import {render, RenderPosition} from "./utils/render";
-import {NoEventsMessage, END_POINT, AUTHORIZATION, STORE_NAME} from "./const";
+// import {NoEventsMessage, END_POINT, AUTHORIZATION, STORE_NAME} from "./const";
+import {NoEventsMessage, END_POINT, AUTHORIZATION} from "./const";
 import EventsModel from "./models/events";
 import DestinationsModel from "./models/destinations";
 import OffersModel from "./models/offers";
 import API from "./api/index";
 import Provider from "./api/provider";
-import Store from "./api/store.js";
+// import Store from "./api/store.js";
 
 const api = new API(END_POINT, AUTHORIZATION);
-const store = new Store(STORE_NAME, window.localStorage);
-const apiWithProvider = new Provider(api, store);
+// const store = new Store(STORE_NAME, window.localStorage);
+// const apiWithProvider = new Provider(api, store);
+const apiWithProvider = new Provider(api);
 const eventsModel = new EventsModel();
 const destinationsModel = new DestinationsModel();
 const offersModel = new OffersModel();
@@ -96,11 +98,16 @@ apiWithProvider.getOffers()
   })
 .catch();
 
-
 apiWithProvider.getDestinations()
   .then((destinations) => {
     destinationsModel.setDestinations(destinations);
   });
+
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`)
+      .then(() => {})
+      .catch(() => {});
+});
 
 window.addEventListener(`online`, () => {
   document.title = document.title.replace(` [offline]`, ``);

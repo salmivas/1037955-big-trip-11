@@ -25,14 +25,14 @@ export default class Store {
     );
   }
 
-  removeItem(key) {
+  removeItem(id) {
     const store = this.getItems();
-
-    delete store[key];
+    const index = store.findIndex((it) => it.id === id);
+    const renewedStore = [].concat(store.slice(0, index), store.slice(index + 1));
 
     this._storage.setItem(
         this._storeKey,
-        JSON.stringify(store)
+        JSON.stringify(renewedStore)
     );
   }
 

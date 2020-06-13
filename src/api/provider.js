@@ -1,4 +1,6 @@
 import Event from "../models/event";
+import Store from "../api/store.js";
+import {STORE_NAME} from "../const";
 
 const isOnline = () => {
   return window.navigator.onLine;
@@ -6,10 +8,10 @@ const isOnline = () => {
 
 const getSyncedEvents = (items) => {
   return items.filter(({success}) => success)
-    .map(({payload}) => payload.event);
+    .map(({payload}) => payload.point);
 };
 
-const createStoreStructure = (items) => {
+const createEventsStoreStructure = (items) => {
   return items.reduce((acc, current) => {
     return Object.assign({}, acc, {
       [current.id]: current,
@@ -18,49 +20,66 @@ const createStoreStructure = (items) => {
 };
 
 export default class Provider {
-  constructor(api, store) {
+  constructor(api) {
+
     this._api = api;
-    this._store = store;
+    this._eventsStore = null;
+    this._offersStore = null;
+    this._destinaitonsStore = null;
   }
 
   getEvents() {
+    this._eventsStore = new Store(STORE_NAME.EVENTS, window.localStorage);
+
     if (isOnline()) {
       return this._api.getEvents()
         .then((events) => {
-          const items = createStoreStructure(events.map((event) => event.toRaw()));
-
-          this._store.setItems(items);
+          this._eventsStore.setItems(events.map((event) => event.toRaw()));
 
           return events;
         });
     }
 
-    const storeEvents = Object.values(this._store.getItems());
+    const storeEvents = Object.values(this._eventsStore.getItems());
 
     return Promise.resolve(Event.parseEvents(storeEvents));
   }
 
   getOffers() {
-    if (isOnline) {
-      return this._api.getOffers();
+    this._offersStore = new Store(STORE_NAME.OFFERS, window.localStorage);
+
+    if (isOnline()) {
+      return this._api.getOffers()
+        .then((offers) => {
+          this._offersStore.setItems(offers);
+
+          return offers;
+        });
     }
 
-    return Promise.reject(`offline logic in not implemented`);
+    return Promise.resolve(this._offersStore.getItems());
   }
 
   getDestinations() {
-    if (isOnline) {
-      return this._api.getDestinations();
+    this._destinaitonsStore = new Store(STORE_NAME.DESTINATIONS, window.localStorage);
+
+    if (isOnline()) {
+      return this._api.getDestinations()
+        .then((destinations) => {
+          this._destinaitonsStore.setItems(destinations);
+
+          return destinations;
+        });
     }
 
-    return Promise.reject(`offline logic in not implemented`);
+    return Promise.resolve(this._destinaitonsStore.getItems());
   }
 
   updateEvent(id, data) {
     if (isOnline()) {
       return this._api.updateEvent(id, data)
         .then((newEvent) => {
-          this._store.setItem(newEvent.id, newEvent.toRaw());
+          this._eventsStore.setItem(newEvent.id, newEvent.toRaw());
 
           return newEvent;
         });
@@ -68,7 +87,7 @@ export default class Provider {
 
     const localEvent = Event.clone(Object.assign(data, {id}));
 
-    this._store.setItem(id, localEvent.toRaw());
+    this._eventsStore.setItem(id, localEvent.toRaw());
 
     return Promise.resolve(localEvent);
   }
@@ -82,27 +101,27 @@ export default class Provider {
   }
 
   deleteEvent(id) {
-    if (isOnline) {
+    if (isOnline()) {
       return this._api.deleteEvent(id)
-        .then(() => this._store.removeItem(id));
+        .then(() => this._eventsStore.removeItem(id));
     }
 
-    this._store.removeItem(id);
+    this._eventsStore.removeItem(id);
 
     return Promise.resolve();
   }
 
   sync() {
     if (isOnline()) {
-      const storeEvents = Object.values(this._store.getItems());
+      const storeEvents = Object.values(this._eventsStore.getItems());
 
       return this._api.sync(storeEvents)
         .then((response) => {
           const createdEvents = getSyncedEvents(response.created);
           const updatedEvents = getSyncedEvents(response.updated);
-          const items = createStoreStructure([...createdEvents, ...updatedEvents]);
+          const items = createEventsStoreStructure([...createdEvents, ...updatedEvents]);
 
-          this._store.setItems(items);
+          this._eventsStore.setItems(items);
         });
     }
 

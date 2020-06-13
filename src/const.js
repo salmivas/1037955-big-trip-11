@@ -36,9 +36,12 @@ const Method = {
   DELETE: `DELETE`
 };
 
-const STORE_PREFIX = `big-trip-localstorage`;
 const STORE_VER = `v1`;
-const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
+const STORE_NAME = {
+  EVENTS: `big-trip-events-localstorage-${STORE_VER}`,
+  OFFERS: `big-trip-offers-localstorage-${STORE_VER}`,
+  DESTINATIONS: `big-trip-destinations-localstorage-${STORE_VER}`,
+};
 
 export {
   TYPES_OF_ACTIVITY,
