@@ -1,29 +1,29 @@
-import SwitchTripViewComponent, {MenuItem} from "../src/Components/switch-tirp-view";
-import StatisticsComponent from "../src/Components/statistics";
-import NoEventsComponent from "../src/Components/no-events";
-import FilterController from "../src/controllers/filter";
-import TripController from "./controllers/trip";
-import {render, RenderPosition} from "./utils/render";
-import {NoEventsMessage, END_POINT, AUTHORIZATION} from "./const";
-import EventsModel from "./models/events";
-import DestinationsModel from "./models/destinations";
-import OffersModel from "./models/offers";
 import API from "./api/index";
 import Provider from "./api/provider";
+import {NoEventsMessage, END_POINT, AUTHORIZATION} from "./const";
+import TripController from "./controllers/trip";
+import DestinationsModel from "./models/destinations";
+import EventsModel from "./models/events";
+import OffersModel from "./models/offers";
+import NoEventsComponent from "../src/Components/no-events";
+import StatisticsComponent from "../src/Components/statistics";
+import SwitchTripViewComponent, {MenuItem} from "../src/Components/switch-tirp-view";
+import FilterController from "../src/controllers/filter";
+import {render, RenderPosition} from "./utils/render";
 
 const api = new API(END_POINT, AUTHORIZATION);
 const apiWithProvider = new Provider(api);
-const eventsModel = new EventsModel();
 const destinationsModel = new DestinationsModel();
+const eventsModel = new EventsModel();
 const offersModel = new OffersModel();
 
-const tripMain = document.querySelector(`.trip-main`);
-const tripViewSwitcher = document.querySelector(`.trip-controls h2:first-child`);
-const tripFilters = document.querySelector(`.trip-controls h2:last-child`);
+const mainPageBody = document.querySelector(`main .page-body__container`);
+const newEventButton = document.querySelector(`.trip-main__event-add-btn`);
 const tripEvents = document.querySelector(`.trip-events`);
 const tripEventsHeader = document.querySelector(`.trip-events h2`);
-const newEventButton = document.querySelector(`.trip-main__event-add-btn`);
-const mainPageBody = document.querySelector(`main .page-body__container`);
+const tripFilters = document.querySelector(`.trip-controls h2:last-child`);
+const tripMain = document.querySelector(`.trip-main`);
+const tripViewSwitcher = document.querySelector(`.trip-controls h2:first-child`);
 
 const tripEventsContainer = {
   tripMain,

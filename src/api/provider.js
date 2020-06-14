@@ -1,7 +1,7 @@
 import Event from "../models/event";
 import Store from "../api/store.js";
-import {STORE_NAME} from "../const";
 import {nanoid} from "nanoid";
+import {StoreName} from "../const";
 
 const isOnline = () => {
   return window.navigator.onLine;
@@ -30,7 +30,7 @@ export default class Provider {
   }
 
   getEvents() {
-    this._eventsStore = new Store(STORE_NAME.EVENTS, window.localStorage);
+    this._eventsStore = new Store(StoreName.EVENTS, window.localStorage);
 
     if (isOnline()) {
       return this._api.getEvents()
@@ -47,7 +47,7 @@ export default class Provider {
   }
 
   getOffers() {
-    this._offersStore = new Store(STORE_NAME.OFFERS, window.localStorage);
+    this._offersStore = new Store(StoreName.OFFERS, window.localStorage);
 
     if (isOnline()) {
       return this._api.getOffers()
@@ -62,7 +62,7 @@ export default class Provider {
   }
 
   getDestinations() {
-    this._destinaitonsStore = new Store(STORE_NAME.DESTINATIONS, window.localStorage);
+    this._destinaitonsStore = new Store(StoreName.DESTINATIONS, window.localStorage);
 
     if (isOnline()) {
       return this._api.getDestinations()

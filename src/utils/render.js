@@ -4,6 +4,7 @@ const RenderPosition = {
   BEFOREBEGIN: `beforebegin`,
   BEFOREEND: `beforeend`,
 };
+
 /**
  * @param {Element} container an HTML-element like <div> or <span>
  * @param {Function} component a class with a certain constructor and methods. One of them (getTemplate()) returns a template of the component it represents
