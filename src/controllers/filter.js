@@ -1,6 +1,7 @@
 import FilterComponent from "../Components/filters";
 import {FilterType} from "../const";
 import {render, replace, RenderPosition} from "../utils/render";
+import {getEventsByFilter} from "../utils/components/filters";
 
 export default class Filter {
   constructor(container, eventsModel) {
@@ -19,9 +20,13 @@ export default class Filter {
   render() {
     const container = this._container;
     const filters = Object.values(FilterType).map((filterType) => {
+      const events = this._eventsModel.getEvents();
+      const filteredEvents = getEventsByFilter(events, filterType);
+
       return {
         name: filterType,
         checked: filterType === this._activeFilterType,
+        isActive: filteredEvents.length > 0
       };
     });
 

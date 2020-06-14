@@ -4,18 +4,14 @@ import NoEventsComponent from "../src/Components/no-events";
 import FilterController from "../src/controllers/filter";
 import TripController from "./controllers/trip";
 import {render, RenderPosition} from "./utils/render";
-// import {NoEventsMessage, END_POINT, AUTHORIZATION, STORE_NAME} from "./const";
 import {NoEventsMessage, END_POINT, AUTHORIZATION} from "./const";
 import EventsModel from "./models/events";
 import DestinationsModel from "./models/destinations";
 import OffersModel from "./models/offers";
 import API from "./api/index";
 import Provider from "./api/provider";
-// import Store from "./api/store.js";
 
 const api = new API(END_POINT, AUTHORIZATION);
-// const store = new Store(STORE_NAME, window.localStorage);
-// const apiWithProvider = new Provider(api, store);
 const apiWithProvider = new Provider(api);
 const eventsModel = new EventsModel();
 const destinationsModel = new DestinationsModel();
@@ -59,7 +55,6 @@ render(tripEventsContainer.tripEventsHeader, noEventsComponent, RenderPosition.A
 newEventButton.disabled = true;
 
 const filterController = new FilterController(tripFilters, eventsModel);
-filterController.render();
 const tripController = new TripController(tripEventsContainer, eventsModel, destinationsModel, offersModel, apiWithProvider);
 
 newEventButton.addEventListener(`click`, (evt) => {
@@ -92,6 +87,7 @@ apiWithProvider.getOffers()
           eventsModel.setEvents(events);
           eventsModel.setDays();
           noEventsComponent.remove();
+          filterController.render();
           tripController.render();
           newEventButton.disabled = false;
         });

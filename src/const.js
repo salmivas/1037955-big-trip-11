@@ -6,16 +6,15 @@ const ACTIVITIES_BY_TYPE = {
 };
 
 const NUMBER_OF_EVENTS_PER_DAY = 4;
-
+const NOT_ACTIVE_OPACITY = 0.6;
 const AUTHORIZATION = `Basic a2lJZdhjayoIKo1b=`;
+const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 
 const FilterType = {
   EVERYTHING: `everything`,
   FUTURE: `future`,
   PAST: `past`,
 };
-
-const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 
 const Url = {
   EVENTS: `points`,
@@ -53,5 +52,6 @@ export {
   NoEventsMessage,
   AUTHORIZATION,
   Method,
-  STORE_NAME
+  STORE_NAME,
+  NOT_ACTIVE_OPACITY
 };

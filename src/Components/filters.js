@@ -1,14 +1,15 @@
 import AbstractComponent from "./abstract-component";
 import {capitalize} from "../utils/common";
+import {NOT_ACTIVE_OPACITY} from "../../src/const";
 
 const createFilterMarkup = (filter) => {
-  const {name, checked} = filter;
+  const {name, checked, isActive} = filter;
 
   return (
     `<div class="trip-filters__filter">
       <input id="filter-${name}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter"
-        value="${name}" ${checked ? `checked` : ``}>
-      <label class="trip-filters__filter-label" for="filter-${name}">${capitalize(name)}</label>
+        value="${name}" ${checked ? `checked` : ``} ${isActive ? `` : `disabled`}>
+      <label class="trip-filters__filter-label" for="filter-${name}" ${isActive ? `` : `style="opacity: ${NOT_ACTIVE_OPACITY}"`}>${capitalize(name)}</label>
     </div>`
   );
 };
